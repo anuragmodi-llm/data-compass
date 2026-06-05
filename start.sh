@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # ── Paths ────────────────────────────────────────────────────────────────
-export PATH="/Users/anuragmodi/Library/Python/3.11/bin:$PATH"
+export PATH="$(python3 -m site --user-base)/bin:$PATH"
 PROJECT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 echo ""
