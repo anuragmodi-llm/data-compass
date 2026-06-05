@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Document Classifier — Demo</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:        #f8f8f8;
+    --surface:   #ffffff;
+    --border:    #e4e9f2;
+    --text:      #131a25;
+    --muted:     #7d8187;
+    --primary:   #1766d6;
+    --primary-h: #104eb8;
+    --green:     #1a7a1e;
+    --green-bg:  #ddf8d1;
+    --yellow:    #ed8e00;
+    --yellow-bg: #fef2cb;
+    --red:       #e23318;
+    --red-bg:    #fde4d0;
+    --radius:    8px;
+    --shadow:    0 1px 4px rgba(0,0,0,.08);
+  }
+
+  body {
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.5;
+    letter-spacing: .004em;
+    color: var(--text);
+    background: var(--bg);
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── Header ── */
+  header {
+    height: 56px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 32px;
+    flex-shrink: 0;
+  }
+  header h1 { font-size: 16px; font-weight: 700; color: var(--text); }
+  header span { font-size: 13px; font-weight: 400; color: var(--muted); margin-left: 12px; }
+
+  /* ── Layout ── */
+  .workspace {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 360px 1fr;
+    gap: 24px;
+    padding: 24px 32px;
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  /* ── Card ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }
+  .card-header {
+    padding: 16px 20px 12px;
+    border-bottom: 1px solid var(--border);
+    font-weight: 700;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: var(--muted);
+  }
+  .card-body { padding: 20px; }
+
+  /* ── Upload zone ── */
+  .drop-zone {
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 36px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color .2s, background .2s;
+  }
+  .drop-zone:hover, .drop-zone.over {
+    border-color: var(--primary);
+    background: #ebf6fe;
+  }
+  .drop-zone svg { color: var(--muted); margin-bottom: 12px; }
+  .drop-zone p { color: var(--muted); font-size: 13px; }
+  .drop-zone p strong { color: var(--primary); cursor: pointer; }
+  .drop-zone input { display: none; }
+
+  /* ── Sample buttons ── */
+  .samples { margin-top: 16px; }
+  .samples p { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+  .sample-grid { display: flex; flex-wrap: wrap; gap: 6px; }
+  .btn-sample {
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 5px 10px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    cursor: pointer;
+    transition: border-color .15s, background .15s;
+  }
+  .btn-sample:hover { border-color: var(--primary); color: var(--primary); background: #ebf6fe; }
+
+  /* ── Upload state chip ── */
+  .file-chip {
+    margin-top: 14px;
+    display: none;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: #f3f3f4;
+    border-radius: var(--radius);
+    font-size: 13px;
+  }
+  .file-chip.visible { display: flex; }
+  .file-chip span { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .file-chip button {
+    background: none; border: none; cursor: pointer; color: var(--muted); font-size: 16px; line-height: 1;
+  }
+
+  /* ── Classify button ── */
+  .btn-primary {
+    margin-top: 16px;
+    width: 100%;
+    padding: 10px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+    background: var(--primary);
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: background .15s;
+  }
+  .btn-primary:hover:not(:disabled) { background: var(--primary-h); }
+  .btn-primary:disabled { opacity: .5; cursor: not-allowed; }
+
+  /* ── Results panel ── */
+  .results-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 320px;
+    color: var(--muted);
+    gap: 12px;
+    font-size: 13px;
+  }
+
+  /* ── Predicted class ── */
+  .pred-label {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .pred-label.rejected { color: var(--red); }
+
+  .status-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+  }
+  .chip-pass  { background: var(--green-bg); color: var(--green); }
+  .chip-reject{ background: var(--red-bg);   color: var(--red);   }
+
+  /* ── Confidence bar ── */
+  .conf-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .conf-label { font-size: 12px; color: var(--muted); }
+  .conf-value { font-size: 20px; font-weight: 700; }
+  .conf-value.high   { color: var(--green); }
+  .conf-value.medium { color: var(--yellow); }
+  .conf-value.low    { color: var(--red); }
+
+  .bar-track {
+    height: 8px;
+    background: var(--border);
+    border-radius: 99px;
+    overflow: hidden;
+    margin-bottom: 14px;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 99px;
+    transition: width .5s ease;
+  }
+  .bar-fill.high   { background: var(--green); }
+  .bar-fill.medium { background: var(--yellow); }
+  .bar-fill.low    { background: var(--red); }
+
+  /* ── Warning ── */
+  .warning-box {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 10px 14px;
+    background: var(--red-bg);
+    border-radius: var(--radius);
+    color: var(--red);
+    font-size: 13px;
+    margin-bottom: 16px;
+  }
+
+  /* ── Divider ── */
+  .divider { height: 1px; background: var(--border); margin: 16px 0; }
+
+  /* ── Collapsible scores ── */
+  .section-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    user-select: none;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+  .section-toggle svg { transition: transform .2s; }
+  .section-toggle.open svg { transform: rotate(180deg); }
+
+  .scores-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .scores-table th {
+    text-align: left;
+    padding: 6px 8px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+  }
+  .scores-table td { padding: 8px 8px; border-bottom: 1px solid #f3f3f4; }
+  .scores-table tr:last-child td { border-bottom: none; }
+  .score-bar-cell { width: 100px; }
+  .mini-bar { height: 5px; background: var(--border); border-radius: 99px; overflow: hidden; }
+  .mini-fill { height: 100%; border-radius: 99px; background: var(--primary); }
+  .pass-dot {
+    display: inline-block;
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    margin-right: 4px;
+  }
+  .dot-pass   { background: var(--green); }
+  .dot-reject { background: #bfc2c4; }
+
+  /* ── Page tabs ── */
+  .page-tabs {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .tab-btn {
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--muted);
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .tab-btn.active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #fff;
+  }
+
+  /* ── Footer row ── */
+  .result-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+  }
+  .timing { font-size: 12px; color: var(--muted); }
+
+  .btn-copy {
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    cursor: pointer;
+    transition: border-color .15s, background .15s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-copy:hover { border-color: var(--primary); color: var(--primary); background: #ebf6fe; }
+  .btn-copy.copied { border-color: var(--green); color: var(--green); background: var(--green-bg); }
+
+  /* ── Spinner ── */
+  .spinner-wrap {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 320px;
+    gap: 14px;
+    color: var(--muted);
+    font-size: 13px;
+  }
+  .spinner {
+    width: 36px; height: 36px;
+    border: 3px solid var(--border);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  @media (max-width: 760px) {
+    .workspace { grid-template-columns: 1fr; padding: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Document Classifier</h1>
+  <span>Demo</span>
+</header>
+
+<div class="workspace">
+
+  <!-- ── Left panel ── -->
+  <div>
+    <div class="card">
+      <div class="card-header">Upload Document</div>
+      <div class="card-body">
+
+        <div class="drop-zone" id="dropZone">
+          <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24"
+               fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="17 8 12 3 7 8"/>
+            <line x1="12" y1="3" x2="12" y2="15"/>
+          </svg>
+          <p>Drag &amp; drop file here<br>or <strong id="browseLink">browse</strong></p>
+          <p style="margin-top:6px;font-size:11px;">PDF · PNG · JPG · TIFF &nbsp;·&nbsp; max 20 MB</p>
+          <input type="file" id="fileInput" accept=".pdf,.png,.jpg,.jpeg,.tiff" />
+        </div>
+
+        <div class="file-chip" id="fileChip">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+               fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+          </svg>
+          <span id="fileChipName"></span>
+          <button id="clearFile" title="Remove">×</button>
+        </div>
+
+        <button class="btn-primary" id="classifyBtn" disabled>Classify Document</button>
+
+        <div class="samples">
+          <p>Try a sample label</p>
+          <div class="sample-grid" id="sampleGrid">
+            <!-- populated by JS from /categories -->
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Right panel ── -->
+  <div class="card" id="resultsCard">
+    <div class="card-header">Results</div>
+    <div class="card-body" style="position:relative;">
+
+      <!-- Placeholder -->
+      <div class="results-placeholder" id="placeholder">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" style="color:#bfc2c4">
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+          <line x1="3" y1="9" x2="21" y2="9"/>
+          <line x1="9" y1="21" x2="9" y2="9"/>
+        </svg>
+        <span>Upload a document to see results</span>
+      </div>
+
+      <!-- Spinner -->
+      <div class="spinner-wrap" id="spinnerWrap">
+        <div class="spinner"></div>
+        <span>Classifying…</span>
+      </div>
+
+      <!-- Result content -->
+      <div id="resultContent" style="display:none;">
+
+        <!-- Page tabs (multi-page PDFs) -->
+        <div class="page-tabs" id="pageTabs" style="display:none;"></div>
+
+        <!-- Main result -->
+        <div id="mainResult"></div>
+
+        <!-- Footer -->
+        <div class="result-footer">
+          <span class="timing" id="timing"></span>
+          <button class="btn-copy" id="copyBtn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"
+                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+            </svg>
+            Copy JSON
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const API_BASE = 'http://localhost:8000';
+
+// ── State ──────────────────────────────────────────────────────────────────
+let selectedFile = null;
+let lastResponse = null;
+let scoresOpen = false;
+let currentPage = 0; // index into page_results (0 = summary)
+
+// ── DOM refs ───────────────────────────────────────────────────────────────
+const dropZone     = document.getElementById('dropZone');
+const fileInput    = document.getElementById('fileInput');
+const browseLink   = document.getElementById('browseLink');
+const fileChip     = document.getElementById('fileChip');
+const fileChipName = document.getElementById('fileChipName');
+const clearFile    = document.getElementById('clearFile');
+const classifyBtn  = document.getElementById('classifyBtn');
+const placeholder  = document.getElementById('placeholder');
+const spinnerWrap  = document.getElementById('spinnerWrap');
+const resultContent= document.getElementById('resultContent');
+const mainResult   = document.getElementById('mainResult');
+const pageTabs     = document.getElementById('pageTabs');
+const timing       = document.getElementById('timing');
+const copyBtn      = document.getElementById('copyBtn');
+const sampleGrid   = document.getElementById('sampleGrid');
+
+// ── Utilities ──────────────────────────────────────────────────────────────
+function bandClass(band) {
+  return { HIGH: 'high', MEDIUM: 'medium', LOW: 'low' }[band] || 'low';
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ── File selection ─────────────────────────────────────────────────────────
+function setFile(file) {
+  if (!file) return;
+  selectedFile = file;
+  fileChipName.textContent = file.name;
+  fileChip.classList.add('visible');
+  classifyBtn.disabled = false;
+}
+
+browseLink.addEventListener('click', () => fileInput.click());
+dropZone.addEventListener('click', () => fileInput.click());
+fileInput.addEventListener('change', () => setFile(fileInput.files[0]));
+
+clearFile.addEventListener('click', () => {
+  selectedFile = null;
+  fileInput.value = '';
+  fileChip.classList.remove('visible');
+  classifyBtn.disabled = true;
+});
+
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('over'); });
+dropZone.addEventListener('dragleave', ()  => dropZone.classList.remove('over'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropZone.classList.remove('over');
+  const f = e.dataTransfer.files[0];
+  if (f) setFile(f);
+});
+
+// ── Sample buttons ─────────────────────────────────────────────────────────
+async function loadCategories() {
+  try {
+    const res = await fetch(`${API_BASE}/categories`);
+    const data = await res.json();
+    const SHOW = ['KYC Document','Bank Account Statement','Salary Slip',
+                  'GST Invoice','Resume / CV','Offer / Appointment Letter'];
+    const cats = data.categories.filter(c => SHOW.includes(c.display_name));
+    cats.forEach(cat => {
+      const btn = document.createElement('button');
+      btn.className = 'btn-sample';
+      btn.textContent = cat.display_name;
+      btn.title = `Sample: ${cat.display_name}`;
+      btn.addEventListener('click', () => {
+        alert(`To try "${cat.display_name}", upload a real document of that type using the drop zone above.`);
+      });
+      sampleGrid.appendChild(btn);
+    });
+  } catch (_) { /* server not running yet — silently skip */ }
+}
+loadCategories();
+
+// ── Classify ───────────────────────────────────────────────────────────────
+classifyBtn.addEventListener('click', classify);
+
+async function classify() {
+  if (!selectedFile) return;
+
+  placeholder.style.display  = 'none';
+  resultContent.style.display = 'none';
+  spinnerWrap.style.display  = 'flex';
+  classifyBtn.disabled = true;
+
+  const form = new FormData();
+  form.append('file', selectedFile);
+  const t0 = performance.now();
+
+  try {
+    const res = await fetch(`${API_BASE}/classify`, { method: 'POST', body: form });
+    const data = await res.json();
+    const elapsed = ((performance.now() - t0) / 1000).toFixed(2);
+
+    if (!res.ok || data.error) {
+      showError(data.error || `Server error ${res.status}`);
+      return;
+    }
+
+    lastResponse = data;
+    renderResult(data, elapsed);
+  } catch (err) {
+    showError(`Network error: ${err.message}`);
+  } finally {
+    spinnerWrap.style.display = 'none';
+    classifyBtn.disabled = false;
+  }
+}
+
+// ── Render ─────────────────────────────────────────────────────────────────
+function renderResult(data, elapsed) {
+  currentPage = 0;
+  scoresOpen = false;
+
+  // Page tabs for multi-page PDFs
+  pageTabs.innerHTML = '';
+  if (data.page_count > 1 && data.page_results) {
+    pageTabs.style.display = 'flex';
+    const summaryTab = makeTab('Summary', 0, true);
+    pageTabs.appendChild(summaryTab);
+    data.page_results.forEach((_, i) => {
+      pageTabs.appendChild(makeTab(`Page ${i + 1}`, i + 1, false));
+    });
+  } else {
+    pageTabs.style.display = 'none';
+  }
+
+  renderPage(data, null, elapsed);
+  resultContent.style.display = 'block';
+  timing.textContent = `Processed in ${elapsed}s`;
+}
+
+function makeTab(label, idx, active) {
+  const btn = document.createElement('button');
+  btn.className = 'tab-btn' + (active ? ' active' : '');
+  btn.textContent = label;
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentPage = idx;
+    const pageData = idx === 0 ? lastResponse : lastResponse.page_results[idx - 1];
+    renderPage(pageData, null, null);
+  });
+  return btn;
+}
+
+function renderPage(data, _unused, elapsedOverride) {
+  const bc = bandClass(data.confidence_band);
+  const isReject = data.status === 'REJECT';
+  const topScores = [...(data.all_scores || [])].slice(0, 5);
+
+  mainResult.innerHTML = `
+    <div class="pred-label ${isReject ? 'rejected' : ''}">${escHtml(data.display_name)}</div>
+    <div>
+      <span class="status-chip ${isReject ? 'chip-reject' : 'chip-pass'}">
+        ${isReject
+          ? '✕ REJECTED — Out of Category'
+          : '✓ CLASSIFIED'}
+      </span>
+    </div>
+
+    ${data.warning ? `
+      <div class="warning-box">
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:1px">
+          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+          <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
+        ${escHtml(data.warning)}
+      </div>` : ''}
+
+    <div class="conf-row">
+      <span class="conf-label">Confidence</span>
+      <span class="conf-value ${bc}">${data.confidence}%</span>
+    </div>
+    <div class="bar-track">
+      <div class="bar-fill ${bc}" style="width:${data.confidence}%"></div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section-toggle" id="scoresToggle">
+      <span>All Scores (top 5)</span>
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+           fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="6 9 12 15 18 9"/>
+      </svg>
+    </div>
+
+    <div id="scoresSection" style="display:none;">
+      <table class="scores-table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Document Type</th>
+            <th>Score</th>
+            <th class="score-bar-cell"></th>
+          </tr>
+        </thead>
+        <tbody>
+          ${topScores.map(s => `
+            <tr>
+              <td><span class="pass-dot ${s.passed_gate ? 'dot-pass' : 'dot-reject'}"></span></td>
+              <td>${escHtml(s.display_name)}</td>
+              <td>${s.score}%</td>
+              <td class="score-bar-cell">
+                <div class="mini-bar">
+                  <div class="mini-fill" style="width:${Math.min(s.score,100)}%"></div>
+                </div>
+              </td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
+
+  // Wire toggle
+  const toggle = document.getElementById('scoresToggle');
+  const section = document.getElementById('scoresSection');
+  toggle.addEventListener('click', () => {
+    scoresOpen = !scoresOpen;
+    section.style.display = scoresOpen ? 'block' : 'none';
+    toggle.classList.toggle('open', scoresOpen);
+  });
+
+  if (elapsedOverride !== null) {
+    timing.textContent = `Processed in ${elapsedOverride}s`;
+  }
+}
+
+function showError(msg) {
+  placeholder.style.display  = 'none';
+  spinnerWrap.style.display  = 'none';
+  resultContent.style.display = 'block';
+  pageTabs.style.display = 'none';
+  mainResult.innerHTML = `
+    <div style="display:flex;align-items:flex-start;gap:10px;padding:16px;background:var(--red-bg);border-radius:var(--radius);color:var(--red);">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+           fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:1px">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="12" y1="8" x2="12" y2="12"/>
+        <line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+      <div><strong>Error</strong><br>${escHtml(msg)}</div>
+    </div>
+  `;
+  timing.textContent = '';
+}
+
+// ── Copy JSON ──────────────────────────────────────────────────────────────
+copyBtn.addEventListener('click', () => {
+  if (!lastResponse) return;
+  navigator.clipboard.writeText(JSON.stringify(lastResponse, null, 2)).then(() => {
+    copyBtn.classList.add('copied');
+    copyBtn.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"
+           fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"/>
+      </svg>
+      Copied!`;
+    setTimeout(() => {
+      copyBtn.classList.remove('copied');
+      copyBtn.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+        </svg>
+        Copy JSON`;
+    }, 1800);
+  });
+});
+</script>
+</body>
+</html>

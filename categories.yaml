@@ -1,0 +1,127 @@
+gate:
+  type: per_class_sigmoid
+  default_threshold: 0.05
+  secondary_multiplier: 3.0
+  reject_label: out_of_category
+
+categories:
+
+  # ── Multi-hypothesis classes ──────────────────────────────────────────
+
+  - label: kyc_document
+    display_name: KYC Document
+    hypotheses:
+      - "an Aadhaar card showing a 12-digit UID number QR code photograph name and address in English and regional script issued by UIDAI"
+      - "an Income Tax Department PAN card with a 10-character alphanumeric permanent account number photograph signature and date of birth"
+      - "an Indian passport booklet open to the photo page with personal details date of birth nationality machine readable zone and Ashoka emblem"
+      - "an Election Commission of India Voter ID EPIC card with voter serial number photograph signature and assembly constituency"
+      - "an Indian Driving License issued by a Regional Transport Office with licence number vehicle class endorsements validity dates and bearer photograph"
+      - "a Vehicle Registration Certificate RC with registration number owner name chassis number engine number and Regional Transport Office authority stamp"
+      - "An Indian passport showing pages with REPUBLIC OF INDIA heading, and an oval ink stamp with signature, government emblem with Ashoka lions, Satyamev Jayate and PASSPORT in English and Hindi."
+      - "An Indian passport with a REPUBLIC OF INDIA heading showing a passport photo of a person, printed fields like name, nationality, date of birth, and place of issue, a signature, and a machine-readable zone of characters."
+      - "A digital identity PAN card on white background. Indian government emblem top left, bold \"PAN CARD\" or \"PAN Verification Record\" heading. Purple \"Verified by DigiLocker\" badge with green checkmark, black and white QR code, \"Tap to Zoom\" text at bottom."
+
+  - label: verification_report
+    display_name: Verification Report
+    hypotheses:
+      - "a background verification report from a BGV agency with candidate name reference ID verification components listed and overall status Verified or Discrepant"
+      - "an employment verification letter or report from an HR or background check agency confirming company name designation joining date and separation date"
+      - "a third-party address verification field report with field agent visit photographs of the premises addressee confirmation remarks and a Verified or Discrepant status stamp from the verification agency"
+      - "a professional background screening report confirming a candidate's educational qualifications by contacting the issuing institution on behalf of an employer"
+      - "a background check report listing multiple verification checks such as employment education address criminal and court each showing individual verification status"
+
+  - label: bank_account_statement
+    display_name: Bank Account Statement
+    hypotheses:
+      - "a bank account statement with a table of transactions showing columns for date narration description debit credit and running account balance"
+      - "a printed bank statement header showing bank name branch address account number IFSC code customer name and statement period dates"
+      - "a multi-row ledger-style bank account statement table with consecutive dated transaction entries each row showing debit credit and a running balance column"
+      - "a bank passbook page or bank e-statement with multiple transaction rows opening balance and closing balance for a savings or current account"
+
+  - label: marksheet_degree
+    display_name: Marksheet / Degree
+    hypotheses:
+      - "an academic marksheet transcript degree certificate or diploma issued by a university or educational board"
+      - "a tabulated student marksheet listing subjects with marks obtained out of maximum total grade points and overall percentage across semesters or years"
+      - "a printed degree or diploma certificate with embossed seal university crest formal award text candidate name conferring date and signatures of registrar"
+
+  - label: vendor_contract
+    display_name: Vendor Contract
+    hypotheses:
+      - "a vendor contract agreement MSA DPA SLA NDA or SOW document"
+      - "a contract signature page with dated signature blocks party names initials and witness signatures at the bottom of a multi-page legal agreement"
+      - "a printed business contract page with numbered clauses headings whereas recitals party definitions obligations indemnity and termination terms in formal legal prose"
+
+  # ── Single-hypothesis classes ─────────────────────────────────────────
+
+  - label: offer_letter_or_appointment_letter
+    display_name: Offer / Appointment Letter
+    prompt: "a scan of a job offer or appointment letter with designation, joining date, salary CTC and probation terms"
+
+  - label: resignation_or_relieving_letter
+    display_name: Resignation / Relieving Letter
+    prompt: "a scan of an employee resignation letter or employer-issued relieving or experience letter"
+
+  - label: salary_slip
+    display_name: Salary Slip
+    prompt: "a monthly salary slip payslip showing earnings deductions PF ESI UAN and net pay"
+
+  - label: form_16_or_form_26
+    display_name: Form 16 / Form 26
+    prompt: "an Indian Form 16 TDS certificate Part A or Part B page showing employer name TAN PAN employee details quarterly tax deducted salary breakup and a TRACES generated digitally signed header"
+
+  - label: noc
+    display_name: No Objection Certificate
+    prompt: "a No Objection Certificate letter on official organisation letterhead with title No Objection Certificate addressed to whom it may concern signed by an authorised signatory with stamp and seal"
+
+  - label: loan_or_credit_application_form
+    display_name: Loan / Credit Application Form
+    prompt: "a loan or credit card application form with applicant details income and references"
+
+  - label: resume
+    display_name: Resume / CV
+    prompt: "a candidate resume CV with education employment history skills and professional summary"
+
+  - label: gst_invoice
+    display_name: GST Invoice
+    prompt: "a GST tax invoice with GSTIN HSN SAC tax breakdowns and supplier customer details"
+
+  - label: purchase_order
+    display_name: Purchase Order
+    prompt: "a purchase order PO document authorizing goods or services with quantity pricing and terms"
+
+  - label: subscription_invoice
+    display_name: Subscription Invoice
+    prompt: "a recurring subscription invoice for SaaS telecom OTT or transport services"
+
+  - label: legal_document
+    display_name: Legal Document
+    prompt: "a scan of a legal document FIR court order affidavit legal notice or tribunal document"
+
+  - label: expense_reimbursement_claim
+    display_name: Expense Reimbursement Claim
+    prompt: "an employee expense reimbursement claim form with attached travel fuel or hotel receipts"
+
+  - label: itr
+    display_name: Income Tax Return
+    prompt: "a scan of an Indian Income Tax Return ITR filing showing income schedules and deductions"
+
+  - label: annual_report
+    display_name: Annual Report
+    prompt: "a company annual report with financial statements directors report and auditor report"
+
+  - label: photograph
+    display_name: Photograph
+    prompt: "a photograph of a human face such as a selfie passport photo or ID photo"
+
+  - label: utility_bills
+    display_name: Utility Bill
+    prompt: "a utility bill for electricity water gas broadband telephone or postpaid service showing customer name and address"
+
+  - label: medical_document
+    display_name: Medical Document
+    prompt: "a medical document such as a prescription lab report discharge summary or medical insurance document"
+
+  - label: out_of_category
+    display_name: Out of Category
+    prompt: "a generic screenshot UI page dashboard icon logo chart code file or template that is not a business document"
