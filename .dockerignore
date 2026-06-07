@@ -1,0 +1,26 @@
+# Python virtual environment — never include in Docker
+venv/
+
+# Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Environment variables — injected at runtime via --env-file
+.env
+
+# Git history
+.git/
+.gitignore
+
+# Mac system files
+.DS_Store
+
+# Test and sample files — not needed in container
+sample_documents/
+
+# Editor files
+.vscode/
+.idea/

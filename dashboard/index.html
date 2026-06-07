@@ -311,6 +311,116 @@
       .cards  { grid-template-columns: repeat(2, 1fr); }
       .charts { grid-template-columns: 1fr; }
     }
+
+    /* ── V2 toggle bar ── */
+    .v2-toggle-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 0 20px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 28px;
+    }
+
+    .v2-toggle-bar .toggle-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--muted);
+      letter-spacing: 0.02em;
+    }
+
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 40px;
+      height: 22px;
+      flex-shrink: 0;
+    }
+
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+
+    .toggle-slider {
+      position: absolute;
+      inset: 0;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      cursor: pointer;
+      transition: background .2s, border-color .2s;
+    }
+
+    .toggle-slider::before {
+      content: '';
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      left: 2px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: var(--muted);
+      border-radius: 50%;
+      transition: transform .2s, background .2s;
+    }
+
+    .toggle-switch input:checked + .toggle-slider {
+      background: rgba(124,111,247,.25);
+      border-color: var(--accent);
+    }
+
+    .toggle-switch input:checked + .toggle-slider::before {
+      transform: translate(18px, -50%);
+      background: var(--accent);
+    }
+
+    /* ── V2 section ── */
+    #v2-section { display: none; }
+
+    .section-heading {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .v2-no-data {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--muted);
+      font-size: 13px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin-bottom: 24px;
+    }
+
+    .v2-charts-full {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .v2-charts-single {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .router-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    @media (max-width: 900px) {
+      .v2-charts-full  { grid-template-columns: 1fr; }
+      .router-cards    { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
@@ -333,6 +443,15 @@
 
 <main>
   <div class="error-bar" id="error-bar"></div>
+
+  <!-- V2 toggle bar -->
+  <div class="v2-toggle-bar">
+    <label class="toggle-switch">
+      <input type="checkbox" id="v2-toggle">
+      <span class="toggle-slider"></span>
+    </label>
+    <span class="toggle-label">V2 Pipeline Health</span>
+  </div>
 
   <!-- Summary cards -->
   <div class="cards">
@@ -405,6 +524,74 @@
         <tr><td colspan="7" class="empty">Loading…</td></tr>
       </tbody>
     </table>
+  </div>
+
+  <!-- ── V2 Pipeline Health section ───────────────────────────── -->
+  <div id="v2-section" style="margin-top:40px;">
+    <div class="section-heading">V2 Pipeline Health</div>
+
+    <!-- No-data placeholder (shown when table is empty) -->
+    <div id="v2-no-data" class="v2-no-data" style="display:none;">
+      No v2 data yet — run a classification via <code style="color:var(--accent)">/v2/classify</code> to populate this section.
+    </div>
+
+    <!-- Panel 1: Summary cards -->
+    <div class="cards" id="v2-cards" style="display:none;">
+      <div class="card">
+        <div class="label">Total docs classified (v2)</div>
+        <div class="value accent" id="v2-stat-total">—</div>
+      </div>
+      <div class="card">
+        <div class="label">Avg classification confidence</div>
+        <div class="value green" id="v2-stat-avg-conf">—</div>
+      </div>
+      <div class="card">
+        <div class="label">Low confidence rate</div>
+        <div class="value amber" id="v2-stat-low-conf">—</div>
+      </div>
+      <div class="card">
+        <div class="label">Boundaries suppressed</div>
+        <div class="value" id="v2-stat-suppressed">—</div>
+      </div>
+    </div>
+
+    <!-- Panel 5: Router path split (placed near top — lightweight, always useful) -->
+    <div class="router-cards" id="v2-router-cards" style="display:none; margin-bottom:14px;">
+      <div class="card">
+        <div class="label">Keyword router</div>
+        <div class="value" id="v2-stat-keyword">—</div>
+      </div>
+      <div class="card">
+        <div class="label">vLM router</div>
+        <div class="value" id="v2-stat-vlm">—</div>
+      </div>
+    </div>
+
+    <!-- Panel 2 + 4: Confidence distribution + Industry distribution -->
+    <div class="v2-charts-full" id="v2-charts-row1" style="display:none;">
+      <div class="chart-card">
+        <h2>Classification Confidence Distribution (v2)</h2>
+        <div class="chart-wrap">
+          <canvas id="v2-chart-confidence"></canvas>
+        </div>
+      </div>
+      <div class="chart-card">
+        <h2>Industry Distribution (v2)</h2>
+        <div class="chart-wrap">
+          <canvas id="v2-chart-industry"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel 3: Class distribution -->
+    <div class="v2-charts-single" id="v2-charts-row2" style="display:none;">
+      <div class="chart-card tall">
+        <h2>Document Class Distribution (v2)</h2>
+        <div class="chart-wrap" style="height:340px;">
+          <canvas id="v2-chart-classes"></canvas>
+        </div>
+      </div>
+    </div>
   </div>
 </main>
 
@@ -664,6 +851,184 @@
 
   // ── Init ─────────────────────────────────────────────────────
   loadAll();
+
+  // ── V2 Pipeline Health ───────────────────────────────────────
+
+  let v2ConfidenceChart, v2IndustryChart, v2ClassChart;
+
+  function setV2PanelsVisible(visible) {
+    const ids = ['v2-cards', 'v2-router-cards', 'v2-charts-row1', 'v2-charts-row2'];
+    ids.forEach(id => document.getElementById(id).style.display = visible ? (id === 'v2-router-cards' ? 'grid' : id === 'v2-cards' ? 'grid' : 'grid') : 'none');
+    document.getElementById('v2-no-data').style.display = visible ? 'none' : 'none';
+  }
+
+  function showV2NoData() {
+    document.getElementById('v2-no-data').style.display = 'block';
+    ['v2-cards','v2-router-cards','v2-charts-row1','v2-charts-row2'].forEach(id => {
+      document.getElementById(id).style.display = 'none';
+    });
+  }
+
+  function renderV2Metrics(data) {
+    if (!data || data.status === 'no_data' || !data.total_documents) {
+      showV2NoData();
+      return;
+    }
+
+    // Show all panels
+    document.getElementById('v2-no-data').style.display = 'none';
+    document.getElementById('v2-cards').style.display = 'grid';
+    document.getElementById('v2-router-cards').style.display = 'grid';
+    document.getElementById('v2-charts-row1').style.display = 'grid';
+    document.getElementById('v2-charts-row2').style.display = 'grid';
+
+    // Panel 1: summary cards
+    const total = data.total_documents || 0;
+    const avgConf = data.avg_classification_confidence;
+    const lowCount = data.low_confidence_count || 0;
+    const suppressed = data.total_boundaries_suppressed || 0;
+
+    document.getElementById('v2-stat-total').textContent = total;
+    document.getElementById('v2-stat-avg-conf').textContent =
+      avgConf != null ? (avgConf * 100).toFixed(1) + '%' : '—';
+    document.getElementById('v2-stat-low-conf').textContent =
+      total > 0 ? ((lowCount / total) * 100).toFixed(1) + '%' : '—';
+    document.getElementById('v2-stat-suppressed').textContent = suppressed;
+
+    // Panel 5: router split
+    document.getElementById('v2-stat-keyword').textContent = data.router_keyword_count || 0;
+    document.getElementById('v2-stat-vlm').textContent     = data.router_vlm_count || 0;
+
+    // Panel 2: confidence distribution bar chart
+    const buckets = data.confidence_buckets || {};
+    const bucketLabels  = Object.keys(buckets).sort();
+    const bucketCounts  = bucketLabels.map(k => buckets[k]);
+
+    if (v2ConfidenceChart) v2ConfidenceChart.destroy();
+    v2ConfidenceChart = new Chart(
+      document.getElementById('v2-chart-confidence').getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels: bucketLabels,
+          datasets: [{
+            data: bucketCounts,
+            backgroundColor: 'rgba(124,111,247,0.6)',
+            borderColor: '#7c6ff7',
+            borderWidth: 1,
+            borderRadius: 3,
+          }],
+        },
+        options: {
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { ticks: { color: '#7c82a0', font: { size: 11 } }, grid: { color: '#2e3347' } },
+            y: { ticks: { color: '#7c82a0', font: { size: 11 } }, grid: { color: '#2e3347' }, beginAtZero: true },
+          },
+        },
+      }
+    );
+
+    // Panel 4: industry distribution doughnut
+    const industry = data.industry_distribution || {};
+    const industryLabels = Object.keys(industry);
+    const industryCounts = industryLabels.map(k => industry[k]);
+    const palette = [
+      '#7c6ff7','#3b82f6','#34c78a','#f59e0b','#ef4444',
+      '#06b6d4','#a855f7','#ec4899','#84cc16','#f97316',
+      '#14b8a6','#6b7280',
+    ];
+
+    if (v2IndustryChart) v2IndustryChart.destroy();
+    v2IndustryChart = new Chart(
+      document.getElementById('v2-chart-industry').getContext('2d'), {
+        type: 'doughnut',
+        data: {
+          labels: industryLabels,
+          datasets: [{
+            data: industryCounts,
+            backgroundColor: palette.slice(0, industryLabels.length),
+            borderColor: '#1a1d27',
+            borderWidth: 2,
+          }],
+        },
+        options: {
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: true,
+              position: 'bottom',
+              labels: { color: '#7c82a0', font: { size: 10 }, padding: 8, boxWidth: 10 },
+            },
+          },
+        },
+      }
+    );
+
+    // Panel 3: class distribution horizontal bar chart
+    const classes = data.class_distribution || {};
+    const classEntries = Object.entries(classes).sort((a, b) => b[1] - a[1]);
+    const classLabels = classEntries.map(([k]) => formatLabel(k));
+    const classCounts = classEntries.map(([, v]) => v);
+
+    if (v2ClassChart) v2ClassChart.destroy();
+    v2ClassChart = new Chart(
+      document.getElementById('v2-chart-classes').getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels: classLabels,
+          datasets: [{
+            data: classCounts,
+            backgroundColor: 'rgba(59,130,246,0.6)',
+            borderColor: '#3b82f6',
+            borderWidth: 1,
+            borderRadius: 3,
+          }],
+        },
+        options: {
+          indexAxis: 'y',
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { ticks: { color: '#7c82a0', font: { size: 11 } }, grid: { color: '#2e3347' }, beginAtZero: true },
+            y: { ticks: { color: '#7c82a0', font: { size: 11 } }, grid: { display: false } },
+          },
+        },
+      }
+    );
+  }
+
+  async function fetchV2Metrics() {
+    try {
+      const res = await fetch(API + '/v2/metrics');
+      if (!res.ok) throw new Error(res.status);
+      const data = await res.json();
+      renderV2Metrics(data);
+    } catch (e) {
+      console.error('v2 metrics fetch failed', e);
+      showV2NoData();
+    }
+  }
+
+  // Toggle initialisation
+  const v2Toggle  = document.getElementById('v2-toggle');
+  const v2Section = document.getElementById('v2-section');
+
+  function applyV2State(enabled) {
+    v2Section.style.display = enabled ? 'block' : 'none';
+    v2Toggle.checked = enabled;
+    if (enabled) fetchV2Metrics();
+  }
+
+  // Restore from localStorage on load
+  const v2Saved = localStorage.getItem('dc_v2_metrics_enabled') === 'true';
+  applyV2State(v2Saved);
+
+  v2Toggle.addEventListener('change', function () {
+    const enabled = this.checked;
+    localStorage.setItem('dc_v2_metrics_enabled', enabled);
+    applyV2State(enabled);
+  });
 </script>
 </body>
 </html>
