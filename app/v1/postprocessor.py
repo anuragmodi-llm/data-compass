@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from classifier import CategoryTree
+from app.v1.classifier import CategoryTree
 
 WARNING_LOW_CONFIDENCE = "Low confidence — recommend manual review"
 

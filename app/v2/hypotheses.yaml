@@ -1,0 +1,243 @@
+# Industry-partitioned hypotheses for v2 SigLIP 2 classification
+# Structure: industries.<industry_label> -> list of {class, hypothesis}
+# common: entries always appended regardless of industry (non-document safety net)
+# Hypothesis texts sourced from siglip2_document_prompts_full.md
+
+industries:
+
+  "Identity & KYC":
+    - class: kyc_document
+      hypothesis: "an Aadhaar card showing a 12-digit UID number QR code photograph name and address in English and regional script issued by UIDAI"
+    - class: kyc_document
+      hypothesis: "an Income Tax Department PAN card with a 10-character alphanumeric permanent account number photograph signature and date of birth"
+    - class: kyc_document
+      hypothesis: "an Indian passport booklet open to the photo page with personal details date of birth nationality machine readable zone and Ashoka emblem"
+    - class: kyc_document
+      hypothesis: "an Election Commission of India Voter ID EPIC card with voter serial number photograph signature and assembly constituency"
+    - class: kyc_document
+      hypothesis: "an Indian Driving License issued by a Regional Transport Office with licence number vehicle class endorsements validity dates and bearer photograph"
+    - class: kyc_document
+      hypothesis: "a Vehicle Registration Certificate RC with registration number owner name chassis number engine number and Regional Transport Office authority stamp"
+    - class: kyc_document
+      hypothesis: "an Indian passport showing pages with REPUBLIC OF INDIA heading and an oval ink stamp with signature government emblem with Ashoka lions Satyamev Jayate and PASSPORT in English and Hindi"
+    - class: kyc_document
+      hypothesis: "an Indian passport with a REPUBLIC OF INDIA heading showing a passport photo of a person printed fields like name nationality date of birth and place of issue a signature and a machine-readable zone of characters"
+    - class: kyc_document
+      hypothesis: "a digital identity PAN card on white background Indian government emblem top left bold PAN CARD or PAN Verification Record heading purple Verified by DigiLocker badge with green checkmark black and white QR code and Tap to Zoom text at bottom"
+    - class: caste_certificate
+      hypothesis: "a state government issued Scheduled Caste or Scheduled Tribe caste certificate with applicant name father's name caste name state authority name issuing tehsildar or SDM seal and certificate registration number in English or regional language"
+    - class: caste_certificate
+      hypothesis: "an OBC Other Backward Class caste certificate issued by a Revenue or District authority with applicant name community name non-creamy layer declaration state emblem and issuing officer designation and stamp"
+    - class: caste_certificate
+      hypothesis: "a DigiLocker or state e-district portal issued digital caste certificate with government emblem QR code Verified by DigiLocker badge applicant name caste category and authority name printed on official template"
+    - class: domicile_or_residence_certificate
+      hypothesis: "a state government issued domicile or permanent residence certificate with applicant name address period of residence in the state issuing authority name SDM or Tehsildar designation and official seal and signature confirming state residency"
+    - class: income_certificate
+      hypothesis: "a government-issued income certificate from a Revenue or Tehsildar authority showing annual family or individual income figure applicant name residential address caste category purpose of issue and issuing officer designation seal and signature"
+    - class: birth_certificate
+      hypothesis: "an official birth certificate issued by a municipal corporation or civil registration office showing child's full name date and place of birth parent names registration number and registrar seal and signature"
+    - class: birth_certificate
+      hypothesis: "a DigiLocker or state portal issued digital birth certificate with QR code government emblem child's name date and place of birth parents' names and issuing authority name on official template"
+    - class: death_certificate
+      hypothesis: "an official death certificate issued by a municipal corporation or state civil registration authority showing deceased person's name age gender date and place of death cause of death registration number and registrar seal and signature"
+    - class: marriage_certificate
+      hypothesis: "an official marriage registration certificate issued under the Hindu Marriage Act or Special Marriage Act showing both spouses' names date and place of marriage witness names Sub-Registrar seal and registration number"
+    - class: marriage_certificate
+      hypothesis: "a DigiLocker or state e-district issued digital marriage certificate with QR code government emblem spouses' names marriage date and Sub-Registrar office name on official state template"
+    - class: disability_certificate_or_UDID
+      hypothesis: "a Unique Disability Identity UDID card issued by the Ministry of Social Justice showing beneficiary name photograph disability type percentage of disability UDID number and issuing authority name"
+    - class: disability_certificate_or_UDID
+      hypothesis: "a state government or medical board issued disability certificate showing patient name age disability type and percentage issuing medical officer names hospital name and authority seal and signature"
+    - class: disability_certificate_or_UDID
+      hypothesis: "a disability certificate from a civil surgeon or district medical board listing diagnosis ICD classification functional limitation assessment and percentage disability with medical board members' signatures"
+    - class: non_creamy_layer_certificate
+      hypothesis: "a state government issued Non-Creamy Layer certificate for OBC applicants certifying annual family income is below the prescribed ceiling showing applicant name father's occupation and income category of OBC community issuing authority designation and stamp confirming non-creamy layer status"
+    - class: CKYC_or_KYC_form
+      hypothesis: "a Central KYC Registry CKYC record or KYC application form with applicant name date of birth PAN Aadhaar number address occupation income slab risk category PEP status and identity document references with self-attestation signature"
+    - class: CKYC_or_KYC_form
+      hypothesis: "a bank or NBFC account opening KYC form with customer name contact details nomination details identity and address proof references fatca declaration and customer signature on institution-branded form"
+    - class: ration_card
+      hypothesis: "a state civil supplies department issued ration card showing head of household name family member names category APL BPL AAY or priority household fair price shop dealer name quota entitlement and card number with state emblem"
+    - class: ration_card
+      hypothesis: "a digitised or e-ration card showing ration card number Aadhaar-seeded status family member list with Aadhaar last digits commodity entitlement per unit and state civil supplies logo on official template"
+    - class: BPL_or_EWS_certificate
+      hypothesis: "a state or district authority issued Below Poverty Line or Economically Weaker Section certificate showing household head name family income annual income figure BPL or EWS category district block gram panchayat issuing officer designation and official seal confirming poverty or income eligibility"
+
+  "Banking & Lending":
+    - class: bank_account_statement
+      hypothesis: "a bank account statement with a table of transactions showing columns for date narration description debit credit and running account balance"
+    - class: bank_account_statement
+      hypothesis: "a printed bank statement header showing bank name branch address account number IFSC code customer name and statement period dates"
+    - class: bank_account_statement
+      hypothesis: "a multi-row ledger-style bank account statement table with consecutive dated transaction entries each row showing debit credit and a running balance column"
+    - class: bank_account_statement
+      hypothesis: "a bank passbook page or bank e-statement with multiple transaction rows opening balance and closing balance for a savings or current account"
+    - class: loan_or_credit_application_form
+      hypothesis: "a loan or credit card application form filled by an applicant with personal details income employment references and declaration signature submitted to a bank or NBFC"
+    - class: loan_sanction_letter
+      hypothesis: "a formal loan sanction letter issued by a bank or NBFC to a borrower on lender letterhead showing sanctioned loan amount interest rate type tenure EMI amount processing fee security collateral details and authorised signatory name and designation"
+    - class: loan_sanction_letter
+      hypothesis: "a housing finance company or HFC loan offer letter or term sheet showing property address loan to value ratio disbursement schedule pre-EMI interest conditions insurance requirements and borrower acceptance signature block"
+    - class: credit_bureau_report
+      hypothesis: "a CIBIL TransUnion credit information report showing credit score out of 900 credit summary table number of accounts outstanding balance overdue amount and account-level repayment history months with DPD values"
+    - class: credit_bureau_report
+      hypothesis: "an Experian or Equifax or CRIF High Mark credit report showing borrower name PAN date of birth credit score accounts section with lender names loan types sanctioned amounts and repayment track record"
+    - class: credit_bureau_report
+      hypothesis: "a credit bureau report enquiries section showing institution names dates and purposes of recent credit enquiries with score trend chart and PAN-linked identity verification header"
+    - class: cheque_or_bank_instrument
+      hypothesis: "a physical or scanned image of a bearer or account-payee cheque with bank name branch address account number MICR code date payee name amount in figures and words and account holder signature"
+    - class: cheque_or_bank_instrument
+      hypothesis: "a demand draft or pay order issued by a bank showing issuing branch drawee bank amount payee name DD number date and bank seal and authorised signature"
+    - class: NACH_or_ECS_mandate
+      hypothesis: "a National Automated Clearing House NACH or ECS debit mandate form signed by a bank account holder showing bank name account number IFSC code MICR code account type account holder name UMRN number frequency amount cap and wet signature authorising recurring debit transactions"
+    - class: EPF_or_UAN_passbook
+      hypothesis: "an EPFO or provident fund account passbook or UAN portal statement showing member name UAN number employer name EPFO establishment code monthly employee and employer contribution interest credit withdrawal entries and current PF balance"
+
+  "Investments & Wealth":
+    - class: demat_account_statement
+      hypothesis: "a Depository Participant issued DEMAT account holding or transaction statement showing DP ID client ID ISIN-wise equity or bond or mutual fund holdings quantity market value transaction date and PAN-linked account holder name with CDSL or NSDL header"
+    - class: mutual_fund_statement_or_CAS
+      hypothesis: "a Consolidated Account Statement CAS or mutual fund account statement showing investor name PAN folio numbers scheme names NAV units held invested value current value and transaction history with AMFI or CAMS or KFintech header"
+
+  "Insurance":
+    - class: insurance_policy_document
+      hypothesis: "a life insurance policy schedule from LIC or a private insurer showing policy number policyholder name sum assured premium amount tenure nominee name and commencement date with insurer logo and seal"
+    - class: insurance_policy_document
+      hypothesis: "a health or mediclaim insurance policy certificate showing insured member names policy number sum insured room rent limit network hospital details pre-existing disease waiting period premium paid and insurer stamp"
+    - class: insurance_policy_document
+      hypothesis: "a motor or vehicle insurance policy certificate showing vehicle registration number make model owner name IDV insured declared value premium breakup add-on covers policy period and insurer authorised signatory stamp"
+    - class: insurance_claim_form
+      hypothesis: "an IRDAI-regulated insurance claim intimation or settlement form showing claimant name policy number date of incident type of claim claimed amount diagnosis or loss description bank account details for settlement and claimant and witness signatures"
+
+  "Taxation & Compliance":
+    - class: form_16_or_form_26
+      hypothesis: "an Indian Form 16 TDS certificate Part A or Part B page showing employer name TAN PAN employee details quarterly tax deducted salary breakup and a TRACES generated digitally signed header"
+    - class: itr
+      hypothesis: "a scan of an Indian Income Tax Return ITR filing acknowledgment or schedule page showing income heads deductions tax payable refund due and ITD e-filing reference number"
+    - class: gst_invoice
+      hypothesis: "a GST tax invoice with GSTIN HSN SAC codes tax breakdowns CGST SGST IGST and supplier and customer details as mandated by the Goods and Services Tax framework"
+    - class: annual_report
+      hypothesis: "a company annual report page with financial statements balance sheet profit and loss directors report auditors report and statutory information for a financial year"
+
+  "Employment & HR":
+    - class: offer_letter_or_appointment_letter
+      hypothesis: "a scan of a job offer or appointment letter with designation joining date salary CTC and probation terms on company letterhead with authorised signatory signature"
+    - class: resignation_or_relieving_letter
+      hypothesis: "a scan of an employee resignation letter or employer-issued relieving or experience letter on company letterhead stating last working date designation and service period"
+    - class: salary_slip
+      hypothesis: "a monthly salary slip payslip showing earnings deductions PF ESI UAN and net pay printed on employer letterhead or payroll software output"
+    - class: verification_report
+      hypothesis: "a background verification report from a BGV agency with candidate name reference ID verification components listed and overall status Verified or Discrepant"
+    - class: verification_report
+      hypothesis: "an employment verification letter or report from an HR or background check agency confirming company name designation joining date and separation date"
+    - class: verification_report
+      hypothesis: "a third-party address verification field report with field agent visit photographs of the premises addressee confirmation remarks and a Verified or Discrepant status stamp from the verification agency"
+    - class: verification_report
+      hypothesis: "a professional background screening report confirming a candidate's educational qualifications by contacting the issuing institution on behalf of an employer"
+    - class: verification_report
+      hypothesis: "a background check report listing multiple verification checks such as employment education address criminal and court each showing individual verification status"
+    - class: resume
+      hypothesis: "a candidate resume CV with education employment history skills certifications and professional summary formatted in sections without an organisation letterhead"
+    - class: expense_reimbursement_claim
+      hypothesis: "an employee expense reimbursement claim form with attached travel fuel hotel or meal receipts showing date of expense amount claimed purpose and employee and manager signatures"
+    - class: pension_or_PPO_document
+      hypothesis: "a central or state government Pension Payment Order PPO document showing pensioner name PPO number date of retirement post held pay scale basic pension commuted pension dearness relief and bank account details for disbursement"
+    - class: pension_or_PPO_document
+      hypothesis: "a government pension passbook or pension slip showing pensioner name PPO number monthly pension amount dearness relief gross and net pension and disbursing bank branch details with pensioner photograph and bank seal"
+
+  "Education":
+    - class: marksheet_degree
+      hypothesis: "an academic marksheet transcript degree certificate or diploma issued by a university or educational board"
+    - class: marksheet_degree
+      hypothesis: "a tabulated student marksheet listing subjects with marks obtained out of maximum total grade points and overall percentage across semesters or years"
+    - class: marksheet_degree
+      hypothesis: "a printed degree or diploma certificate with embossed seal university crest formal award text candidate name conferring date and signatures of registrar"
+    - class: migration_or_transfer_certificate
+      hypothesis: "a school or university issued migration certificate or transfer certificate showing student name roll number institution name board or university affiliation course passed date of leaving reason for leaving character remarks and principal or registrar seal and signature"
+    - class: professional_license_or_registration_certificate
+      hypothesis: "a Bar Council of India or State Bar Council enrolment certificate showing advocate name enrolment number date of enrolment bar council name and registrar seal confirming legal practice eligibility"
+    - class: professional_license_or_registration_certificate
+      hypothesis: "a National Medical Commission NMC or state medical council registration certificate showing doctor name MBBS or specialisation degree registration number date of registration and medical council seal and signature"
+    - class: professional_license_or_registration_certificate
+      hypothesis: "an ICAI ICSI or ICWAI membership certificate showing member name membership number fellowship or associate grade date of admission and institute seal confirming chartered accountant company secretary or cost accountant status"
+    - class: character_or_conduct_certificate
+      hypothesis: "an institution employer or police authority issued character certificate or conduct certificate showing subject's name period of association character assessment remarks good conduct declaration issuing authority name designation and official seal and signature"
+
+  "Corporate & Business Registration":
+    - class: certificate_of_incorporation_or_MOA
+      hypothesis: "a Ministry of Corporate Affairs issued Certificate of Incorporation showing company name CIN corporate identity number date of incorporation type of company registered address and Registrar of Companies seal and signature"
+    - class: certificate_of_incorporation_or_MOA
+      hypothesis: "a Memorandum of Association or Articles of Association printed document showing company name registered office capital clause subscriber names witness signatures and Registrar of Companies stamp on front page"
+    - class: MSME_or_Udyam_certificate
+      hypothesis: "an Udyam Registration Certificate issued by the Ministry of MSME showing Udyam Registration Number enterprise name PAN GSTIN NIC activity code major activity type of organisation date of registration and investment in plant and machinery and turnover classification"
+    - class: FSSAI_license
+      hypothesis: "a Food Safety and Standards Authority of India FSSAI license or registration certificate showing license or registration number business operator name address category of food business FBO type validity period and FSSAI logo and issuing authority signature"
+    - class: shop_and_establishment_certificate
+      hypothesis: "a state labour department issued Shop and Establishment Act registration certificate showing establishment name proprietor or employer name business address nature of establishment number of employees registration number validity and issuing authority seal"
+    - class: trade_license
+      hypothesis: "a municipal corporation or local body issued trade license showing business name proprietor or partner name trade or business activity premises address ward zone license number annual fee amount and issuing officer seal and signature"
+    - class: board_resolution_or_POA
+      hypothesis: "a certified true extract of a Board Resolution on company letterhead showing resolution date meeting type names of directors present resolution text authorising a named person or action and company secretary or director certification signature and company seal"
+    - class: board_resolution_or_POA
+      hypothesis: "a registered or notarised Power of Attorney document showing grantor name grantee name scope of authority granted property or transaction description execution date witness names and notary or Sub-Registrar seal and registration number"
+    - class: vendor_contract
+      hypothesis: "a vendor contract agreement MSA DPA SLA NDA or SOW document"
+    - class: vendor_contract
+      hypothesis: "a contract signature page with dated signature blocks party names initials and witness signatures at the bottom of a multi-page legal agreement"
+    - class: vendor_contract
+      hypothesis: "a printed business contract page with numbered clauses headings whereas recitals party definitions obligations indemnity and termination terms in formal legal prose"
+    - class: purchase_order
+      hypothesis: "a purchase order PO document authorizing procurement of goods or services with item description quantity unit price total value payment terms and authorised buyer signature"
+
+  "Property & Real Estate":
+    - class: property_deed_or_sale_agreement
+      hypothesis: "a registered sale deed or conveyance deed for immovable property with buyer and seller names property survey or plot number area in square feet or square metres consideration amount stamp duty paid Sub-Registrar office seal and book volume page registration number"
+    - class: property_deed_or_sale_agreement
+      hypothesis: "an agreement to sell or sale agreement for immovable property with buyer seller names property description advance payment terms possession date penalty clauses and notary or advocate signature and stamp"
+    - class: rental_or_leave_license_agreement
+      hypothesis: "a registered rental agreement or leave and licence agreement showing tenant name landlord name property address monthly rent amount security deposit tenure start and end dates notary or Sub-Registrar stamp and both party signatures"
+    - class: rental_or_leave_license_agreement
+      hypothesis: "a notarised or e-stamp tenancy agreement with stamp paper details or franking details tenant and landlord names property description maintenance terms and witness signatures used as address proof in KYC processes"
+    - class: property_tax_receipt
+      hypothesis: "a municipal corporation issued property tax receipt or demand notice showing property owner name unique property ID zone ward survey number or flat number annual assessed value tax amount paid payment receipt number and issuing municipality name and stamp"
+
+  "Medical & Healthcare":
+    - class: medical_document
+      hypothesis: "a doctor's prescription on clinic or hospital letterhead with patient name age diagnosis prescribed medicines dosage and physician registration number and signature"
+    - class: medical_document
+      hypothesis: "a diagnostic or pathology lab report showing patient name sample ID test names reference ranges and results with laboratory header and pathologist signature"
+    - class: medical_document
+      hypothesis: "a hospital discharge summary showing patient name admission and discharge dates diagnosis treatment summary and attending doctor signature on hospital letterhead"
+    - class: medical_document
+      hypothesis: "a health insurance card or mediclaim card showing insured name policy number sum insured network hospital list validity and insurance company logo"
+    - class: vaccination_or_immunisation_certificate
+      hypothesis: "a Co-WIN generated COVID-19 vaccination certificate showing beneficiary name age gender dose number vaccine name batch number vaccinator name vaccination site date and unique QR code on Government of India template"
+    - class: vaccination_or_immunisation_certificate
+      hypothesis: "a government or hospital issued immunisation or vaccination record for other vaccines such as polio hepatitis or influenza showing patient name age vaccine name dose date and health centre or doctor name"
+    - class: ABHA_health_account_card
+      hypothesis: "an Ayushman Bharat Health Account ABHA card or digital document issued under the National Digital Health Mission showing 14-digit ABHA number QR code beneficiary name date of birth gender and linked health records reference on Government of India ABDM template"
+    - class: Ayushman_Bharat_card
+      hypothesis: "an Ayushman Bharat Pradhan Mantri Jan Arogya Yojana PMJAY beneficiary card showing scheme name beneficiary name family unit ID PMJAY-ID state district name QR code and National Health Authority logo confirming entitlement to cashless hospitalisation"
+
+  "Procurement & Finance Operations":
+    - class: subscription_invoice
+      hypothesis: "a recurring subscription invoice for SaaS telecom OTT or transport services showing billing period plan name usage charges taxes and next renewal date"
+    - class: utility_bills
+      hypothesis: "a utility bill for electricity water gas broadband telephone or postpaid mobile service showing customer name account number billing period consumption units amount due and service provider logo"
+    - class: SIM_or_telecom_CAF
+      hypothesis: "a mobile telecom Customer Acquisition Form CAF submitted to a TSP like Jio Airtel BSNL or Vi showing subscriber name address date of birth identity document type and number photograph affixed and subscriber signature on operator-branded form"
+    - class: SIM_or_telecom_CAF
+      hypothesis: "a telecom subscriber form or SIM activation record showing mobile number IMSI ICCID SIM card details plan type document verification checklist and retailer or store executive signature and outlet code"
+
+  "Legal":
+    - class: legal_document
+      hypothesis: "a scan of a legal document FIR court order affidavit legal notice or tribunal document with case number court seal advocate signature or notary stamp and formal legal language"
+    - class: noc
+      hypothesis: "a No Objection Certificate letter on official organisation letterhead with title No Objection Certificate addressed to whom it may concern signed by an authorised signatory with stamp and seal"
+
+# Always included regardless of industry — non-document safety net for scoped classification
+common:
+  - class: photograph
+    hypothesis: "a photograph of a human face such as a selfie passport-size photo or ID photo showing a person's face clearly against a plain or neutral background with no document text visible"
+  - class: out_of_category
+    hypothesis: "a generic screenshot UI dashboard icon logo chart code snippet template or any image that is not a physical or digital business compliance or identity document"

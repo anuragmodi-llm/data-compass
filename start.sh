@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # ── Paths ────────────────────────────────────────────────────────────────
+source "$(dirname "$0")/venv/bin/activate"
 export PATH="$(python3 -m site --user-base)/bin:$PATH"
 PROJECT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
@@ -26,7 +27,7 @@ sleep 1
 
 # ── Start backend ─────────────────────────────────────────────────────────
 cd "$PROJECT_DIR"
-PYTHONPATH=app uvicorn app.main:app --port 8000 &
+uvicorn app.main:app --port 8000 &
 BACKEND_PID=$!
 
 # ── Wait for backend to be ready ──────────────────────────────────────────

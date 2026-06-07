@@ -1,0 +1,227 @@
+"""
+Pipeline orchestrator — v2 multi-document classify endpoint.
+
+Imports the v1 FastAPI app and adds two v2 routes to it:
+  POST /v2/classify  — full multi-document pipeline
+  GET  /v2/metrics   — pipeline health metrics from Supabase
+
+All v1 routes (/classify, /health, /logs, etc.) remain untouched.
+
+Route ordering note: v1/main.py ends with app.mount("/", StaticFiles(...))
+which is a catch-all. Routes appended after that mount are never reached.
+Fix: remove the static mount before registering v2 routes, then re-append
+it so it remains the final fallback — preserving the correct match order.
+"""
+
+import logging
+import uuid
+
+from fastapi import File, UploadFile
+from fastapi.responses import JSONResponse
+from starlette.routing import Mount
+
+from app.v1.main import app  # all v1 routes already registered
+
+from app.v2.pipeline.splitter import split_pdf, open_image
+from app.v2.pipeline.boundary import detect_boundaries, merge_same_class_segments
+from app.v2.pipeline.router import keyword_route, vlm_route, extract_text_top
+from app.v2.classifier import classify_with_siglip2, load_hypotheses_for_industry
+from app.v2.db import log_to_supabase_v2, fetch_v2_metrics
+
+logger = logging.getLogger(__name__)
+
+
+# ── Re-anchor static mount so v2 routes take precedence ──────────────────────
+# v1/main.py registers app.mount("/", StaticFiles(...)) last, making it a
+# catch-all that intercepts any route appended after it.  Remove it now,
+# register v2 routes below, then re-append it at the very end.
+
+_static_mount = None
+for _route in app.router.routes:
+    if isinstance(_route, Mount) and getattr(_route, "name", None) == "frontend":
+        _static_mount = _route
+        break
+if _static_mount:
+    app.router.routes.remove(_static_mount)
+
+
+# ── Helpers ───────────────────────────────────────────────────────────────────
+
+def _confidence_band(score: float) -> str:
+    if score >= 0.75:
+        return "HIGH"
+    if score >= 0.50:
+        return "MEDIUM"
+    return "LOW"
+
+
+def _classification_reasoning(top_score: float, second_score: float) -> str:
+    margin = round(top_score - second_score, 3)
+    if margin >= 0.4:
+        clarity = "unambiguous match"
+    elif margin >= 0.2:
+        clarity = "clear match"
+    elif margin >= 0.1:
+        clarity = "moderate confidence match"
+    else:
+        clarity = "low-margin match — manual review recommended"
+    return (
+        f"Top hypothesis score {top_score:.2f} vs next-best {second_score:.2f}. "
+        f"Margin {margin} indicates {clarity}."
+    )
+
+
+# ── V2 routes ─────────────────────────────────────────────────────────────────
+
+@app.post("/v2/classify")
+async def classify_v2(file: UploadFile = File(...)):
+    file_bytes = await file.read()
+    filename = file.filename or ""
+    pdf_id = str(uuid.uuid4())
+
+    is_image = filename.lower().endswith((".jpg", ".jpeg", ".png"))
+
+    doc = None  # Bug 3: orchestrator owns fitz.Document lifecycle
+    total_suppressed = 0
+
+    try:
+        # ── Input triage ─────────────────────────────────────────────────────
+        if is_image:
+            # Bug 1 fix: image path never calls keyword_route
+            page_images = open_image(file_bytes)
+            total_pages = 1
+            segments = [{
+                "page_range":           [0, 0],
+                "representative_image": page_images[0],
+                "boundary_info":        None,
+            }]
+
+        else:
+            # Bug 3 fix: doc kept open until finally block
+            try:
+                page_images, doc = split_pdf(file_bytes)
+            except ValueError as exc:
+                return JSONResponse(status_code=422, content={"error": str(exc)})
+
+            total_pages = len(page_images)
+
+            if total_pages == 1:
+                segments = [{
+                    "page_range":           [0, 0],
+                    "representative_image": page_images[0],
+                    "boundary_info":        None,
+                }]
+            else:
+                # Bug 2 fix: all indices strictly 0-based until final assembly
+                segments, total_suppressed = detect_boundaries(doc, page_images)
+
+        # ── Route + scope + classify each segment ────────────────────────────
+        classified_segments = []
+
+        for seg in segments:
+            page_idx = seg["page_range"][0]  # 0-based
+            rep_image = seg["representative_image"]
+
+            # Industry routing
+            if is_image:
+                # Bug 1 fix: image uploads always go to vLM directly
+                routing = vlm_route(rep_image)
+            else:
+                text = extract_text_top(doc[page_idx])
+                routing = keyword_route(text)
+                if routing["industry_1"] is None:
+                    routing = vlm_route(rep_image)
+
+            industry = routing["industry_1"]
+
+            # Hypothesis scoping
+            hypotheses = load_hypotheses_for_industry(industry)
+
+            # SigLIP 2 classification
+            result = classify_with_siglip2(image=rep_image, hypotheses=hypotheses)
+
+            cl_confidence = round(result["top_score"], 3)
+            cl_reasoning  = _classification_reasoning(result["top_score"], result["second_score"])
+
+            classified_segments.append({
+                "page_range":                    seg["page_range"],  # still 0-based
+                "boundary_info":                 seg["boundary_info"],
+                "routing":                       routing,
+                "predicted_class":               result["class"],
+                "top_hypothesis":                result["top_hypothesis"],
+                "classification_confidence":     cl_confidence,
+                "classification_confidence_band": _confidence_band(cl_confidence),
+                "classification_reasoning":      cl_reasoning,
+            })
+
+        # Step 9: post-boundary merge
+        final_segments = merge_same_class_segments(classified_segments)
+
+        # ── Final response assembly — ONLY place 0-based → 1-based ──────────
+        results = []
+        for i, seg in enumerate(final_segments):
+            b = seg["boundary_info"]
+            results.append({
+                "document_index": i + 1,
+                "page_range": [
+                    seg["page_range"][0] + 1,
+                    seg["page_range"][1] + 1,
+                ],
+                "boundary": {
+                    "confidence":      b["confidence"]      if b else None,
+                    "confidence_band": b["confidence_band"] if b else None,
+                    "reasoning":       b["reasoning"]       if b else
+                                       "Single document upload — no boundary detection performed",
+                },
+                "routing": {
+                    "industry_1":       seg["routing"]["industry_1"],
+                    "industry_1_score": seg["routing"]["industry_1_score"],
+                    "industry_2":       seg["routing"]["industry_2"],
+                    "industry_2_score": seg["routing"]["industry_2_score"],
+                    "confidence":       seg["routing"]["routing_confidence"],
+                    "confidence_band":  seg["routing"]["confidence_band"],
+                    "reasoning":        seg["routing"]["reasoning"],
+                    "router_path":      seg["routing"]["router_path"],
+                },
+                "classification": {
+                    "predicted_class":  seg["predicted_class"],
+                    "confidence":       seg["classification_confidence"],
+                    "confidence_band":  seg["classification_confidence_band"],
+                    "reasoning":        seg["classification_reasoning"],
+                    "top_hypothesis":   seg["top_hypothesis"],
+                },
+            })
+
+        # Step 10: Supabase logging — one batched call for the whole upload
+        try:
+            log_to_supabase_v2(
+                pdf_id=pdf_id,
+                filename=filename,
+                results=results,
+                boundaries_suppressed=total_suppressed,
+            )
+        except Exception:
+            logger.exception("v2 Supabase logging failed (non-fatal)")
+
+        return {
+            "pipeline_version":   "v2",
+            "filename":           filename,
+            "total_pages":        total_pages,
+            "documents_detected": len(results),
+            "results":            results,
+        }
+
+    finally:
+        # Bug 3 fix: always close fitz.Document regardless of success/failure
+        if doc is not None:
+            doc.close()
+
+
+@app.get("/v2/metrics")
+async def get_v2_metrics():
+    return fetch_v2_metrics()
+
+
+# ── Re-append static files mount as the final catch-all ──────────────────────
+if _static_mount:
+    app.router.routes.append(_static_mount)

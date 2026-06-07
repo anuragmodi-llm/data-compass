@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Document Classifier — Dashboard</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #0f1117;
+      --surface:  #1a1d27;
+      --surface2: #22263a;
+      --border:   #2e3347;
+      --text:     #e8eaf2;
+      --muted:    #7c82a0;
+      --accent:   #7c6ff7;
+      --green:    #34c78a;
+      --amber:    #f59e0b;
+      --red:      #ef4444;
+      --blue:     #3b82f6;
+
+      --band-high:     #34c78a;
+      --band-medium:   #f59e0b;
+      --band-low:      #ef4444;
+      --band-rejected: #6b7280;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    /* ── Layout ── */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 28px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    header h1 {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: 0.01em;
+    }
+
+    header .subtitle {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .controls label {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    select {
+      background: var(--surface2);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 6px 10px;
+      font-size: 13px;
+      cursor: pointer;
+      outline: none;
+    }
+
+    select:focus { border-color: var(--accent); }
+
+    .refresh-btn {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all .15s;
+    }
+
+    .refresh-btn:hover { border-color: var(--accent); color: var(--text); }
+
+    main {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 24px 28px 48px;
+    }
+
+    /* ── Summary cards ── */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px 20px;
+    }
+
+    .card .label {
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 8px;
+    }
+
+    .card .value {
+      font-size: 28px;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1;
+    }
+
+    .card .value.green  { color: var(--green); }
+    .card .value.amber  { color: var(--amber); }
+    .card .value.accent { color: var(--accent); }
+
+    /* ── Chart grid ── */
+    .charts {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .chart-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+    }
+
+    .chart-card h2 {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--muted);
+      margin-bottom: 16px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .chart-wrap {
+      position: relative;
+      height: 200px;
+    }
+
+    /* class distribution is taller */
+    .chart-card.tall .chart-wrap { height: 340px; }
+
+    /* ── Table ── */
+    .table-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .table-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .table-header h2 {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .pagination {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .pagination button {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 5px;
+      padding: 4px 10px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .pagination button:disabled { opacity: 0.3; cursor: not-allowed; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead th {
+      padding: 10px 20px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid var(--border);
+      transition: background .1s;
+    }
+
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: var(--surface2); }
+
+    tbody td {
+      padding: 11px 20px;
+      font-size: 13px;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 220px;
+    }
+
+    .band-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .band-high     { background: rgba(52,199,138,.15); color: var(--band-high); }
+    .band-medium   { background: rgba(245,158,11,.15); color: var(--band-medium); }
+    .band-low      { background: rgba(239,68,68,.15);  color: var(--band-low); }
+    .band-rejected { background: rgba(107,114,128,.15); color: var(--band-rejected); }
+
+    .view-btn {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--accent);
+      border-radius: 5px;
+      padding: 3px 10px;
+      font-size: 11px;
+      cursor: pointer;
+      transition: all .15s;
+    }
+
+    .view-btn:hover { border-color: var(--accent); background: rgba(124,111,247,.1); }
+
+    /* ── Loading / empty states ── */
+    .skeleton {
+      background: linear-gradient(90deg, var(--surface2) 25%, var(--border) 50%, var(--surface2) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+      border-radius: 4px;
+    }
+
+    @keyframes shimmer { to { background-position: -200% 0; } }
+
+    .empty {
+      text-align: center;
+      padding: 48px 20px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .error-bar {
+      background: rgba(239,68,68,.1);
+      border: 1px solid rgba(239,68,68,.3);
+      border-radius: 8px;
+      color: var(--red);
+      padding: 10px 16px;
+      font-size: 13px;
+      margin-bottom: 16px;
+      display: none;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 900px) {
+      .cards  { grid-template-columns: repeat(2, 1fr); }
+      .charts { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>Document Classifier</h1>
+    <div class="subtitle">Monitoring Dashboard</div>
+  </div>
+  <div class="controls">
+    <label>Period</label>
+    <select id="days-select" onchange="onDaysChange()">
+      <option value="7">Last 7 days</option>
+      <option value="30" selected>Last 30 days</option>
+      <option value="90">Last 90 days</option>
+    </select>
+    <button class="refresh-btn" onclick="loadAll()">↺ Refresh</button>
+  </div>
+</header>
+
+<main>
+  <div class="error-bar" id="error-bar"></div>
+
+  <!-- Summary cards -->
+  <div class="cards">
+    <div class="card">
+      <div class="label">Total uploads</div>
+      <div class="value accent" id="stat-total">—</div>
+    </div>
+    <div class="card">
+      <div class="label">Unique classes seen</div>
+      <div class="value" id="stat-classes">—</div>
+    </div>
+    <div class="card">
+      <div class="label">Rejection rate</div>
+      <div class="value amber" id="stat-rejection">—</div>
+    </div>
+    <div class="card">
+      <div class="label">Avg confidence</div>
+      <div class="value green" id="stat-confidence">—</div>
+    </div>
+  </div>
+
+  <!-- Charts row -->
+  <div class="charts">
+    <!-- Volume -->
+    <div class="chart-card">
+      <h2>Upload volume</h2>
+      <div class="chart-wrap">
+        <canvas id="chart-volume"></canvas>
+      </div>
+    </div>
+    <!-- Confidence breakdown -->
+    <div class="chart-card">
+      <h2>Confidence bands</h2>
+      <div class="chart-wrap">
+        <canvas id="chart-confidence"></canvas>
+      </div>
+    </div>
+    <!-- Class distribution -->
+    <div class="chart-card tall">
+      <h2>Class distribution</h2>
+      <div class="chart-wrap" style="height:340px">
+        <canvas id="chart-classes"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Upload history table -->
+  <div class="table-card">
+    <div class="table-header">
+      <h2>Upload history</h2>
+      <div class="pagination">
+        <span id="page-info">—</span>
+        <button id="btn-prev" onclick="prevPage()" disabled>← Prev</button>
+        <button id="btn-next" onclick="nextPage()">Next →</button>
+      </div>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Filename</th>
+          <th>Predicted label</th>
+          <th>Score</th>
+          <th>Band</th>
+          <th>Processing</th>
+          <th>Uploaded at</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="logs-body">
+        <tr><td colspan="7" class="empty">Loading…</td></tr>
+      </tbody>
+    </table>
+  </div>
+</main>
+
+<script>
+  const API = 'http://localhost:8000';
+  let currentPage = 1;
+  let totalItems = 0;
+  const PAGE_SIZE = 20;
+
+  let volumeChart, confidenceChart, classChart;
+
+  // ── Utilities ────────────────────────────────────────────────
+
+  function days() {
+    return parseInt(document.getElementById('days-select').value);
+  }
+
+  function showError(msg) {
+    const bar = document.getElementById('error-bar');
+    bar.textContent = '⚠ ' + msg;
+    bar.style.display = 'block';
+  }
+
+  function clearError() {
+    document.getElementById('error-bar').style.display = 'none';
+  }
+
+  async function apiFetch(path) {
+    const res = await fetch(API + path);
+    if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+    return res.json();
+  }
+
+  function formatLabel(label) {
+    if (!label) return '—';
+    return label.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+  }
+
+  function formatScore(score) {
+    if (score == null) return '—';
+    return (score * 100).toFixed(1) + '%';
+  }
+
+  function formatDate(iso) {
+    if (!iso) return '—';
+    const d = new Date(iso);
+    return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })
+      + ' ' + d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+  }
+
+  function bandClass(band) {
+    const map = { high: 'band-high', medium: 'band-medium', low: 'band-low', rejected: 'band-rejected' };
+    return map[band] || 'band-rejected';
+  }
+
+  // ── Charts ───────────────────────────────────────────────────
+
+  const chartDefaults = {
+    color: '#7c82a0',
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { ticks: { color: '#7c82a0', font: { size: 11 } }, grid: { color: '#2e3347' } },
+      y: { ticks: { color: '#7c82a0', font: { size: 11 } }, grid: { color: '#2e3347' } },
+    },
+  };
+
+  function buildVolumeChart(data) {
+    const ctx = document.getElementById('chart-volume').getContext('2d');
+    if (volumeChart) volumeChart.destroy();
+    volumeChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: data.map(d => {
+          const dt = new Date(d.day);
+          return dt.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' });
+        }),
+        datasets: [{
+          data: data.map(d => d.count),
+          backgroundColor: 'rgba(124,111,247,0.6)',
+          borderColor: '#7c6ff7',
+          borderWidth: 1,
+          borderRadius: 3,
+        }],
+      },
+      options: {
+        ...chartDefaults,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+      },
+    });
+  }
+
+  function buildConfidenceChart(data) {
+    const ctx = document.getElementById('chart-confidence').getContext('2d');
+    if (confidenceChart) confidenceChart.destroy();
+    const colorMap = { high: '#34c78a', medium: '#f59e0b', low: '#ef4444', rejected: '#6b7280' };
+    confidenceChart = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: data.map(d => d.band ? d.band.charAt(0).toUpperCase() + d.band.slice(1) : 'Unknown'),
+        datasets: [{
+          data: data.map(d => d.count),
+          backgroundColor: data.map(d => colorMap[d.band] || '#6b7280'),
+          borderColor: '#1a1d27',
+          borderWidth: 2,
+        }],
+      },
+      options: {
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: true,
+            position: 'bottom',
+            labels: { color: '#7c82a0', font: { size: 11 }, padding: 10, boxWidth: 12 },
+          },
+        },
+      },
+    });
+  }
+
+  function buildClassChart(data) {
+    const ctx = document.getElementById('chart-classes').getContext('2d');
+    if (classChart) classChart.destroy();
+    classChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: data.map(d => formatLabel(d.label)),
+        datasets: [{
+          data: data.map(d => d.count),
+          backgroundColor: 'rgba(59,130,246,0.6)',
+          borderColor: '#3b82f6',
+          borderWidth: 1,
+          borderRadius: 3,
+        }],
+      },
+      options: {
+        indexAxis: 'y',
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { ticks: { color: '#7c82a0', font: { size: 11 } }, grid: { color: '#2e3347' } },
+          y: { ticks: { color: '#7c82a0', font: { size: 11 } }, grid: { display: false } },
+        },
+      },
+    });
+  }
+
+  // ── Summary cards ────────────────────────────────────────────
+
+  async function loadSummary() {
+    try {
+      const d = await apiFetch(`/stats/summary?days=${days()}`);
+      document.getElementById('stat-total').textContent     = d.total_uploads ?? '0';
+      document.getElementById('stat-classes').textContent   = d.unique_classes ?? '0';
+      document.getElementById('stat-rejection').textContent = (d.rejection_rate ?? 0) + '%';
+      document.getElementById('stat-confidence').textContent = d.avg_confidence != null
+        ? (d.avg_confidence * 100).toFixed(1) + '%' : '—';
+    } catch (e) {
+      showError('Could not load summary stats. Is the backend running at ' + API + '?');
+    }
+  }
+
+  // ── Chart loaders ────────────────────────────────────────────
+
+  async function loadVolume() {
+    try {
+      const data = await apiFetch(`/stats/volume?days=${days()}`);
+      buildVolumeChart(data);
+    } catch (e) { console.error('volume', e); }
+  }
+
+  async function loadConfidence() {
+    try {
+      const data = await apiFetch(`/stats/confidence-breakdown?days=${days()}`);
+      buildConfidenceChart(data);
+    } catch (e) { console.error('confidence', e); }
+  }
+
+  async function loadClasses() {
+    try {
+      const data = await apiFetch(`/stats/class-distribution?days=${days()}`);
+      buildClassChart(data);
+    } catch (e) { console.error('classes', e); }
+  }
+
+  // ── Logs table ───────────────────────────────────────────────
+
+  async function loadLogs(page = 1) {
+    currentPage = page;
+    const tbody = document.getElementById('logs-body');
+    tbody.innerHTML = '<tr><td colspan="7" class="empty">Loading…</td></tr>';
+
+    try {
+      const data = await apiFetch(`/logs?page=${page}&page_size=${PAGE_SIZE}&days=${days()}`);
+      totalItems = data.total;
+
+      if (!data.items || data.items.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" class="empty">No uploads in this period.</td></tr>';
+        updatePagination();
+        return;
+      }
+
+      tbody.innerHTML = data.items.map(row => `
+        <tr>
+          <td title="${row.filename}">${row.filename}</td>
+          <td>${formatLabel(row.predicted_label)}</td>
+          <td>${formatScore(row.confidence_score)}</td>
+          <td><span class="band-badge ${bandClass(row.confidence_band)}">${row.confidence_band || '—'}</span></td>
+          <td>${row.processing_time_ms != null ? row.processing_time_ms + ' ms' : '—'}</td>
+          <td>${formatDate(row.uploaded_at)}</td>
+          <td><button class="view-btn" onclick="viewFile('${row.id}')">View</button></td>
+        </tr>
+      `).join('');
+
+      updatePagination();
+    } catch (e) {
+      tbody.innerHTML = '<tr><td colspan="7" class="empty">Failed to load logs.</td></tr>';
+    }
+  }
+
+  function updatePagination() {
+    const totalPages = Math.ceil(totalItems / PAGE_SIZE);
+    document.getElementById('page-info').textContent =
+      totalItems > 0 ? `Page ${currentPage} of ${totalPages} (${totalItems} total)` : '0 results';
+    document.getElementById('btn-prev').disabled = currentPage <= 1;
+    document.getElementById('btn-next').disabled = currentPage >= totalPages;
+  }
+
+  function prevPage() { if (currentPage > 1) loadLogs(currentPage - 1); }
+  function nextPage() { loadLogs(currentPage + 1); }
+
+  async function viewFile(uploadId) {
+    try {
+      const data = await apiFetch(`/file-url/${uploadId}`);
+      window.open(data.url, '_blank');
+    } catch (e) {
+      alert('Could not get file URL. Check backend logs.');
+    }
+  }
+
+  // ── Master loader ────────────────────────────────────────────
+
+  async function loadAll() {
+    clearError();
+    await Promise.all([
+      loadSummary(),
+      loadVolume(),
+      loadConfidence(),
+      loadClasses(),
+      loadLogs(1),
+    ]);
+  }
+
+  function onDaysChange() {
+    loadAll();
+  }
+
+  // ── Init ─────────────────────────────────────────────────────
+  loadAll();
+</script>
+</body>
+</html>

@@ -13,7 +13,7 @@ from watchdog.events import FileSystemEventHandler
 logger = logging.getLogger(__name__)
 
 MODEL_ID = "google/siglip2-base-patch16-224"
-CATEGORIES_PATH = Path(__file__).parent.parent / "categories.yaml"
+CATEGORIES_PATH = Path(__file__).parent / "categories.yaml"
 
 
 # ── Device detection ──────────────────────────────────────────────────────────
