@@ -321,6 +321,73 @@
   .btn-copy:hover { border-color: var(--primary); color: var(--primary); background: #ebf6fe; }
   .btn-copy.copied { border-color: var(--green); color: var(--green); background: var(--green-bg); }
 
+  /* ── V2 result items ── */
+  .v2-summary {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .v2-doc-item {
+    border-left: 4px solid var(--border);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    padding: 12px 14px;
+    margin-bottom: 12px;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .v2-doc-item.band-high   { border-left-color: var(--green); }
+  .v2-doc-item.band-medium { border-left-color: var(--yellow); }
+  .v2-doc-item.band-low    { border-left-color: var(--red); }
+  .v2-winner-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 4px;
+  }
+  .v2-class-name {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+    text-transform: capitalize;
+  }
+  .v2-conf-badge {
+    font-size: 12px;
+    font-weight: 700;
+    padding: 2px 9px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+  .v2-conf-badge.high   { background: var(--green-bg);  color: var(--green); }
+  .v2-conf-badge.medium { background: var(--yellow-bg); color: var(--yellow); }
+  .v2-conf-badge.low    { background: var(--red-bg);    color: var(--red); }
+  .v2-page-range {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .v2-detail {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 4px;
+    line-height: 1.5;
+  }
+  .v2-detail strong { color: var(--text); font-weight: 600; }
+  .v2-boundary-box {
+    margin-top: 8px;
+    padding: 8px 10px;
+    background: #f3f3f4;
+    border-radius: var(--radius);
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .v2-boundary-box strong { color: var(--text); font-weight: 600; }
+
   /* ── Spinner ── */
   .spinner-wrap {
     display: none;
@@ -548,7 +615,7 @@ async function classify() {
   const t0 = performance.now();
 
   try {
-    const res = await fetch(`${API_BASE}/classify`, { method: 'POST', body: form });
+    const res = await fetch(`${API_BASE}/v2/classify`, { method: 'POST', body: form });
     const data = await res.json();
     const elapsed = ((performance.now() - t0) / 1000).toFixed(2);
 
@@ -571,8 +638,17 @@ async function classify() {
 function renderResult(data, elapsed) {
   currentPage = 0;
   scoresOpen = false;
+  resultContent.style.display = 'block';
+  timing.textContent = `Processed in ${elapsed}s`;
 
-  // Page tabs for multi-page PDFs
+  // ── V2 response path ──────────────────────────────────────────────────────
+  if (data.pipeline_version === 'v2') {
+    pageTabs.style.display = 'none';
+    renderV2(data);
+    return;
+  }
+
+  // ── V1 response path (unchanged) ─────────────────────────────────────────
   pageTabs.innerHTML = '';
   if (data.page_count > 1 && data.page_results) {
     pageTabs.style.display = 'flex';
@@ -586,8 +662,44 @@ function renderResult(data, elapsed) {
   }
 
   renderPage(data, null, elapsed);
-  resultContent.style.display = 'block';
-  timing.textContent = `Processed in ${elapsed}s`;
+}
+
+// ── V2 render ──────────────────────────────────────────────────────────────
+function renderV2(data) {
+  const docsCount  = data.documents_detected;
+  const pagesCount = data.total_pages;
+
+  let html = `<div class="v2-summary">${docsCount} document${docsCount !== 1 ? 's' : ''} detected across ${pagesCount} page${pagesCount !== 1 ? 's' : ''}</div>`;
+
+  data.results.forEach(doc => {
+    const cls  = doc.classification;
+    const rt   = doc.routing;
+    const bd   = doc.boundary;
+    const bc   = bandClass(cls.confidence_band);
+    const pct  = Math.round(cls.confidence * 100);
+    const pr   = doc.page_range;
+    const pageLabel = (pr[0] === pr[1]) ? `Page ${pr[0]}` : `Pages ${pr[0]}–${pr[1]}`;
+    const industry  = (rt.industry_1) || 'Unknown';
+    const hasBoundary = bd.confidence !== null;
+
+    html += `
+      <div class="v2-doc-item band-${bc}">
+        <div class="v2-winner-row">
+          <span class="v2-class-name">${escHtml(cls.predicted_class.replace(/_/g, ' '))}</span>
+          <span class="v2-conf-badge ${bc}">${pct}% · ${escHtml(cls.confidence_band)}</span>
+        </div>
+        <div class="v2-page-range">${escHtml(pageLabel)} · Doc ${doc.document_index} of ${data.documents_detected}</div>
+        <div class="v2-detail"><strong>Industry:</strong> ${escHtml(industry)}</div>
+        <div class="v2-detail"><strong>Routing:</strong> ${escHtml(rt.reasoning)}</div>
+        <div class="v2-detail"><strong>Classification:</strong> ${escHtml(cls.reasoning)}</div>
+        ${hasBoundary ? `
+        <div class="v2-boundary-box">
+          <strong>Boundary:</strong> ${escHtml(bd.confidence_band || '')} — ${escHtml(bd.reasoning)}
+        </div>` : ''}
+      </div>`;
+  });
+
+  mainResult.innerHTML = html;
 }
 
 function makeTab(label, idx, active) {
