@@ -53,7 +53,9 @@ INDUSTRY_KEYWORDS: dict[str, list[str]] = {
         "ctc", "cost to company", "basic salary", "hra", "pf deduction",
         "relieving letter", "experience letter", "last working day",
         "resignation", "reimbursement", "curriculum vitae", "resume",
-        "background verification", "bgv",
+        "work experience", "experience", "skills", "education",
+        "objective", "summary", "achievements", "responsibilities",
+        "projects", "internship", "volunteer",
     ],
     "Education": [
         "marksheet", "mark sheet", "university", "board of education",
@@ -104,14 +106,21 @@ def _confidence_band(score: float) -> str:
     return "LOW"
 
 
-def extract_text_top(page: fitz.Page, top_fraction: float = 0.4) -> str:
+def extract_text_full(page: fitz.Page) -> str:
     """
-    Extract text from the top 40% of a page using the embedded text layer.
+    Extract all text from a page using the embedded text layer.
     Returns empty string if no text layer exists (scanned page).
+    Full page extraction gives better keyword coverage than
+    top-40% crop — section headers like Work Experience, Skills,
+    GSTIN, line items appear throughout the page body.
+    Cost: ~1-5ms regardless of text volume (pymupdf is fast).
     """
-    r = page.rect
-    clip = fitz.Rect(r.x0, r.y0, r.x1, r.y0 + r.height * top_fraction)
-    return page.get_text(clip=clip)
+    return page.get_text().strip()
+
+
+# Keep extract_text_top as a deprecated alias for backward compatibility
+def extract_text_top(page: fitz.Page, top_fraction: float = 1.0) -> str:
+    return extract_text_full(page)
 
 
 # ── Path A: keyword routing ──────────────────────────────────────────────────

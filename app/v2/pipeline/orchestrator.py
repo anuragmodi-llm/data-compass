@@ -25,7 +25,7 @@ from app.v1.main import app  # all v1 routes already registered
 
 from app.v2.pipeline.splitter import split_pdf, open_image
 from app.v2.pipeline.boundary import detect_boundaries, merge_same_class_segments
-from app.v2.pipeline.router import keyword_route, vlm_route, extract_text_top
+from app.v2.pipeline.router import keyword_route, vlm_route, extract_text_full
 from app.v2.classifier import classify_with_siglip2, load_hypotheses_for_industry, load_all_hypotheses
 from app.v2.db import log_to_supabase_v2, fetch_v2_metrics
 
@@ -161,7 +161,7 @@ async def classify_v2(
             if is_image:
                 routing = vlm_route(rep_image)
             else:
-                text = extract_text_top(doc[page_idx])
+                text = extract_text_full(doc[page_idx])
                 routing = keyword_route(text)
                 if routing["industry_1"] is None:
                     routing = vlm_route(rep_image)
@@ -333,7 +333,7 @@ async def debug_routing(file: UploadFile = File(...)):
         pages_detail = []
 
         for page_idx in range(total_pages):
-            text = extract_text_top(doc[page_idx])
+            text = extract_text_full(doc[page_idx])
             routing = keyword_route(text)
             if routing["industry_1"] is None:
                 routing = vlm_route(page_images[page_idx])
