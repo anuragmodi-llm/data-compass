@@ -14,9 +14,10 @@ it so it remains the final fallback — preserving the correct match order.
 """
 
 import logging
+import time
 import uuid
 
-from fastapi import File, UploadFile
+from fastapi import File, Header, UploadFile
 from fastapi.responses import JSONResponse
 from starlette.routing import Mount
 
@@ -25,7 +26,7 @@ from app.v1.main import app  # all v1 routes already registered
 from app.v2.pipeline.splitter import split_pdf, open_image
 from app.v2.pipeline.boundary import detect_boundaries, merge_same_class_segments
 from app.v2.pipeline.router import keyword_route, vlm_route, extract_text_top
-from app.v2.classifier import classify_with_siglip2, load_hypotheses_for_industry
+from app.v2.classifier import classify_with_siglip2, load_hypotheses_for_industry, load_all_hypotheses
 from app.v2.db import log_to_supabase_v2, fetch_v2_metrics
 
 logger = logging.getLogger(__name__)
@@ -74,8 +75,18 @@ def _classification_reasoning(top_score: float, second_score: float) -> str:
 # ── V2 routes ─────────────────────────────────────────────────────────────────
 
 @app.post("/v2/classify")
-async def classify_v2(file: UploadFile = File(...)):
+async def classify_v2(
+    file: UploadFile = File(...),
+    x_benchmark_timing: str = Header(default=None, alias="X-Benchmark-Timing"),
+):
+    want_timing = (x_benchmark_timing or "").lower() == "true"
+    t_total_start = time.perf_counter()
+
+    # ── Step: file read ───────────────────────────────────────────────────────
+    t0 = time.perf_counter()
     file_bytes = await file.read()
+    file_read_ms = round((time.perf_counter() - t0) * 1000, 1)
+
     filename = file.filename or ""
     pdf_id = str(uuid.uuid4())
 
@@ -84,10 +95,15 @@ async def classify_v2(file: UploadFile = File(...)):
     doc = None  # Bug 3: orchestrator owns fitz.Document lifecycle
     total_suppressed = 0
 
+    # Timing accumulators (summed across all segments for per-segment steps)
+    _t_routing        = 0.0
+    _t_hyp_loading    = 0.0
+    _t_siglip2        = 0.0
+
     try:
-        # ── Input triage ─────────────────────────────────────────────────────
+        # ── Step: page splitting ──────────────────────────────────────────────
+        t0 = time.perf_counter()
         if is_image:
-            # Bug 1 fix: image path never calls keyword_route
             page_images = open_image(file_bytes)
             total_pages = 1
             segments = [{
@@ -95,25 +111,34 @@ async def classify_v2(file: UploadFile = File(...)):
                 "representative_image": page_images[0],
                 "boundary_info":        None,
             }]
-
         else:
-            # Bug 3 fix: doc kept open until finally block
             try:
                 page_images, doc = split_pdf(file_bytes)
             except ValueError as exc:
                 return JSONResponse(status_code=422, content={"error": str(exc)})
-
             total_pages = len(page_images)
-
             if total_pages == 1:
                 segments = [{
                     "page_range":           [0, 0],
                     "representative_image": page_images[0],
                     "boundary_info":        None,
                 }]
-            else:
-                # Bug 2 fix: all indices strictly 0-based until final assembly
-                segments, total_suppressed = detect_boundaries(doc, page_images)
+        splitting_ms = round((time.perf_counter() - t0) * 1000, 1)
+
+        # ── Step: metadata fingerprinting + pHash + boundary detection ────────
+        t0 = time.perf_counter()
+        metadata_ms = 0.0
+        phash_ms = 0.0
+        boundary_ms = 0.0
+        heading_ms = 0.0
+        if not is_image and total_pages > 1:
+            # boundary detection wraps metadata, phash, and heading steps
+            # internally; we time the whole block and attribute to boundary
+            t_bd = time.perf_counter()
+            segments, total_suppressed = detect_boundaries(doc, page_images)
+            boundary_ms = round((time.perf_counter() - t_bd) * 1000, 1)
+        else:
+            boundary_ms = round((time.perf_counter() - t0) * 1000, 1)
 
         # ── Route + scope + classify each segment ────────────────────────────
         classified_segments = []
@@ -123,36 +148,54 @@ async def classify_v2(file: UploadFile = File(...)):
             rep_image = seg["representative_image"]
 
             # Industry routing
+            t0 = time.perf_counter()
             if is_image:
-                # Bug 1 fix: image uploads always go to vLM directly
                 routing = vlm_route(rep_image)
             else:
                 text = extract_text_top(doc[page_idx])
                 routing = keyword_route(text)
                 if routing["industry_1"] is None:
                     routing = vlm_route(rep_image)
+            _t_routing += time.perf_counter() - t0
 
             industry = routing["industry_1"]
+            routing_confidence = routing.get("routing_confidence", 0.0)
 
-            # Hypothesis scoping
-            hypotheses = load_hypotheses_for_industry(industry)
+            ROUTING_CONFIDENCE_THRESHOLD = 0.25
+
+            # Hypothesis loading
+            t0 = time.perf_counter()
+            if industry is not None and routing_confidence >= ROUTING_CONFIDENCE_THRESHOLD:
+                hypotheses = load_hypotheses_for_industry(industry)
+                hypothesis_scope = "industry_scoped"
+            else:
+                hypotheses = load_all_hypotheses()
+                hypothesis_scope = "full_set_fallback"
+            _t_hyp_loading += time.perf_counter() - t0
 
             # SigLIP 2 classification
+            t0 = time.perf_counter()
             result = classify_with_siglip2(image=rep_image, hypotheses=hypotheses)
+            _t_siglip2 += time.perf_counter() - t0
 
             cl_confidence = round(result["top_score"], 3)
             cl_reasoning  = _classification_reasoning(result["top_score"], result["second_score"])
 
             classified_segments.append({
-                "page_range":                    seg["page_range"],  # still 0-based
+                "page_range":                    seg["page_range"],
                 "boundary_info":                 seg["boundary_info"],
                 "routing":                       routing,
+                "hypothesis_scope":              hypothesis_scope,
                 "predicted_class":               result["class"],
                 "top_hypothesis":                result["top_hypothesis"],
                 "classification_confidence":     cl_confidence,
                 "classification_confidence_band": _confidence_band(cl_confidence),
                 "classification_reasoning":      cl_reasoning,
             })
+
+        routing_ms    = round(_t_routing    * 1000, 1)
+        hyp_load_ms   = round(_t_hyp_loading * 1000, 1)
+        siglip2_ms    = round(_t_siglip2    * 1000, 1)
 
         # Step 9: post-boundary merge
         final_segments = merge_same_class_segments(classified_segments)
@@ -182,6 +225,7 @@ async def classify_v2(file: UploadFile = File(...)):
                     "confidence_band":  seg["routing"]["confidence_band"],
                     "reasoning":        seg["routing"]["reasoning"],
                     "router_path":      seg["routing"]["router_path"],
+                    "hypothesis_scope": seg["hypothesis_scope"],
                 },
                 "classification": {
                     "predicted_class":  seg["predicted_class"],
@@ -192,7 +236,8 @@ async def classify_v2(file: UploadFile = File(...)):
                 },
             })
 
-        # Step 10: Supabase logging — one batched call for the whole upload
+        # Step 10: Supabase logging
+        t0 = time.perf_counter()
         try:
             log_to_supabase_v2(
                 pdf_id=pdf_id,
@@ -202,8 +247,11 @@ async def classify_v2(file: UploadFile = File(...)):
             )
         except Exception:
             logger.exception("v2 Supabase logging failed (non-fatal)")
+        supabase_ms = round((time.perf_counter() - t0) * 1000, 1)
 
-        return {
+        total_ms = round((time.perf_counter() - t_total_start) * 1000, 1)
+
+        response: dict = {
             "pipeline_version":   "v2",
             "filename":           filename,
             "total_pages":        total_pages,
@@ -211,8 +259,24 @@ async def classify_v2(file: UploadFile = File(...)):
             "results":            results,
         }
 
+        if want_timing:
+            response["pipeline_timing"] = {
+                "file_read_ms":                  file_read_ms,
+                "page_splitting_ms":             splitting_ms,
+                "metadata_fingerprinting_ms":    metadata_ms,
+                "phash_computation_ms":          phash_ms,
+                "boundary_detection_ms":         boundary_ms,
+                "heading_confirmation_ms":       heading_ms,
+                "industry_routing_ms":           routing_ms,
+                "hypothesis_loading_ms":         hyp_load_ms,
+                "siglip2_classification_ms":     siglip2_ms,
+                "supabase_logging_ms":           supabase_ms,
+                "total_pipeline_ms":             total_ms,
+            }
+
+        return response
+
     finally:
-        # Bug 3 fix: always close fitz.Document regardless of success/failure
         if doc is not None:
             doc.close()
 

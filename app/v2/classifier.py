@@ -58,6 +58,20 @@ def load_hypotheses_for_industry(industry: Optional[str]) -> list[dict]:
     return industry_hyps + common
 
 
+def load_all_hypotheses() -> list[dict]:
+    """
+    Return every hypothesis from hypotheses.yaml regardless of industry.
+    Used by the orchestrator when routing confidence is below threshold,
+    preventing a weak keyword match from scoping hypotheses to the wrong industry.
+    """
+    data = _load_hypotheses()
+    all_hyps: list[dict] = []
+    for hyp_list in data.get("industries", {}).values():
+        all_hyps.extend(hyp_list)
+    all_hyps.extend(data.get("common", []))
+    return all_hyps
+
+
 def classify_with_siglip2(image: Image.Image, hypotheses: list[dict]) -> dict:
     """
     Score a PIL image against a list of hypothesis dicts using SigLIP 2.

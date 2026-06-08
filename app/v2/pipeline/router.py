@@ -7,6 +7,8 @@ Path A (keyword): digital PDFs with embedded text layer — fast, CPU only.
 Path B (vLM):     image uploads and scanned pages — deferred to Phase 2.2.
 """
 
+import re
+
 import fitz
 from PIL import Image
 
@@ -139,7 +141,10 @@ def keyword_route(text: str) -> dict:
     matched_kws: dict[str, list[str]] = {}
 
     for industry, keywords in INDUSTRY_KEYWORDS.items():
-        hits = [kw for kw in keywords if kw in text_lower]
+        hits = [
+            kw for kw in keywords
+            if re.search(r'\b' + re.escape(kw) + r'\b', text_lower)
+        ]
         raw_scores[industry] = len(hits)
         matched_kws[industry] = hits
 

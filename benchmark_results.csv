@@ -1,0 +1,19 @@
+filename,v2_elapsed_s,v1_elapsed_s,v2_docs_detected,v2_predicted_class,v2_confidence,v2_confidence_band,v2_industry_1,v2_routing_confidence,v2_router_path,v2_hypothesis_scope,v1_predicted_label,v1_confidence,v1_confidence_band,v1_status,agree,file_read_ms,page_splitting_ms,metadata_fingerprinting_ms,phash_computation_ms,boundary_detection_ms,heading_confirmation_ms,industry_routing_ms,hypothesis_loading_ms,siglip2_classification_ms,supabase_logging_ms,total_pipeline_ms
+121594238-Emirates-e-Ticket-1.pdf,9.013,39.124,1,SIM_or_telecom_CAF,0.49,LOW,,0.0,vlm,full_set_fallback,subscription_invoice,49.8,MEDIUM,PASS,False,0.0,69.6,0.0,0.0,42.9,0.0,5.9,15.2,7022.5,1782.4,8947.2
+336261280-Indigo-Ticket.pdf,60.066,0.0,2,verification_report,0.154,LOW,,0.0,vlm,full_set_fallback,,,,,,0.1,284.6,0.0,0.0,445.6,0.0,378.7,5.5,58024.3,601.2,59778.3
+382333201-GST-Certificate.pdf,72.958,13.198,4,professional_license_or_registration_certificate,0.793,HIGH,Medical & Healthcare,0.083,keyword,full_set_fallback,legal_document,86.6,HIGH,PASS,False,0.5,231.4,0.0,0.0,180.5,0.0,146.2,2.2,32442.8,428.6,33474.4
+414850761-Djtt-Gst-Certificate-1.pdf,15.464,23.123,1,caste_certificate,0.721,MEDIUM,Medical & Healthcare,0.083,keyword,full_set_fallback,marksheet_degree,63.7,MEDIUM,PASS,False,0.0,174.6,0.0,0.0,95.3,0.0,36.4,1.5,14094.9,855.9,15260.4
+417748875-179147-5PMF2604195PMF1274BD72E7059F44C3-SIGNED-pdf.pdf,71.492,64.945,6,CKYC_or_KYC_form,0.681,MEDIUM,Investments & Wealth,0.071,keyword,full_set_fallback,noc,79.9,HIGH,PASS,False,0.4,274.5,0.0,0.0,232.8,0.0,422.8,0.9,69370.5,1000.5,71374.9
+724889540-DOLS-Amit-Kumar-BAMS-Srivastava.pdf,100.991,30.023,8,marksheet_degree,0.312,LOW,,0.0,vlm,full_set_fallback,kyc_document,95.6,HIGH,PASS,False,0.0,311.0,0.0,0.0,184.4,0.0,729.4,8.2,99061.8,547.2,100882.9
+800097065-85f4ebaa-efb7-4917-a29f-f7e5f1f3fb61 (1).pdf,0.0,0.0,,,,,,,,,,,,,,,,,,,,,,,,
+Justdial-OnGrid_Agreement.pdf,0.0,0.0,,,,,,,,,,,,,,,,,,,,,,,,
+Payslip DFDL.pdf,47.734,94.14,1,salary_slip,0.983,HIGH,Employment & HR,0.111,keyword,full_set_fallback,salary_slip,95.3,HIGH,PASS,True,0.0,419.6,0.0,0.0,0.0,0.0,55.8,1.6,41252.1,858.0,42619.1
+Payslip_1212_May_2026_8390342009566494850_1779879155823.pdf,27.102,0.0,1,subscription_invoice,0.876,HIGH,Banking & Lending,0.045,keyword,full_set_fallback,,,,,,0.1,306.5,0.0,0.0,0.1,0.0,89.0,1.6,25845.8,637.1,26888.6
+Resume- Mohit Singhal  (1).pdf,82.49,114.323,1,resume,0.563,MEDIUM,Identity & KYC,0.095,keyword,full_set_fallback,resume,67.3,MEDIUM,PASS,True,0.0,228.2,0.0,0.0,0.0,0.0,108.2,2.7,22565.8,774.4,23745.2
+Sanjay_Hegde_Product_Manager_IDfy.pdf,40.802,51.426,1,resume,0.856,HIGH,Procurement & Finance Operations,0.077,keyword,full_set_fallback,resume,84.4,HIGH,PASS,True,0.0,300.9,0.0,0.0,0.0,0.0,38.9,2.2,38568.3,1631.4,40551.4
+adhar1.1.jpeg,12.324,54.445,1,caste_certificate,0.758,HIGH,,0.0,vlm,full_set_fallback,kyc_document,49.1,MEDIUM,PASS,False,0.0,9.1,0.0,0.0,0.0,0.0,0.5,0.2,11871.2,349.1,12244.8
+bank card - 5.jpeg,17.825,5.966,1,kyc_document,0.059,LOW,,0.0,vlm,full_set_fallback,out_of_category,0.0,LOW,REJECT,False,0.0,26.1,0.0,0.0,0.0,0.0,1.2,0.5,17401.1,310.7,17744.7
+blessyresume.pdf,7.957,12.301,1,resume,0.58,MEDIUM,,0.0,vlm,full_set_fallback,resume,60.6,MEDIUM,PASS,True,0.0,229.4,0.0,0.0,123.7,0.0,10.2,0.0,6998.3,496.3,7865.0
+cheque-8.jpg.jpeg,94.341,9.475,1,cheque_or_bank_instrument,0.495,LOW,,0.0,vlm,full_set_fallback,bank_account_statement,44.7,MEDIUM,PASS,False,0.7,68.7,0.0,0.0,0.0,0.0,0.5,0.1,92805.9,1360.4,94246.9
+medical doc - 2.jpeg,5.193,18.88,1,marksheet_degree,0.081,LOW,,0.0,vlm,full_set_fallback,marksheet_degree,8.1,LOW,PASS,True,0.0,11.7,0.0,0.0,0.0,0.0,0.5,0.0,4343.9,787.2,5147.6
+passbook-1.jpg.jpeg,71.325,114.162,1,kyc_document,0.512,MEDIUM,,0.0,vlm,full_set_fallback,kyc_document,51.2,MEDIUM,PASS,True,0.5,66.1,0.0,0.0,0.0,0.0,0.0,0.3,70604.3,525.7,71244.6

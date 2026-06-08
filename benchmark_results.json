@@ -1,0 +1,1086 @@
+[
+  {
+    "filename": "121594238-Emirates-e-Ticket-1.pdf",
+    "v2_elapsed": 9.013,
+    "v1_elapsed": 39.124,
+    "v2_error": null,
+    "v1_error": null,
+    "v2_docs_detected": 1,
+    "v2_predicted_class": "SIM_or_telecom_CAF",
+    "v2_confidence": 0.49,
+    "v2_confidence_band": "LOW",
+    "v2_industry_1": null,
+    "v2_routing_confidence": 0.0,
+    "v2_router_path": "vlm",
+    "v2_hypothesis_scope": "full_set_fallback",
+    "v2_pipeline_timing": {
+      "file_read_ms": 0.0,
+      "page_splitting_ms": 69.6,
+      "metadata_fingerprinting_ms": 0.0,
+      "phash_computation_ms": 0.0,
+      "boundary_detection_ms": 42.9,
+      "heading_confirmation_ms": 0.0,
+      "industry_routing_ms": 5.9,
+      "hypothesis_loading_ms": 15.2,
+      "siglip2_classification_ms": 7022.5,
+      "supabase_logging_ms": 1782.4,
+      "total_pipeline_ms": 8947.2
+    },
+    "v1_predicted_label": "subscription_invoice",
+    "v1_confidence": 49.8,
+    "v1_confidence_band": "MEDIUM",
+    "v1_status": "PASS",
+    "agree": false,
+    "v2_all_docs": [
+      {
+        "document_index": 1,
+        "page_range": [
+          1,
+          2
+        ],
+        "predicted_class": "SIM_or_telecom_CAF",
+        "confidence": 0.49,
+        "confidence_band": "LOW",
+        "reasoning": "Top hypothesis score 0.49 vs next-best 0.45. Margin 0.036 indicates low-margin m\u2026",
+        "industry_1": null,
+        "routing_confidence": 0.0,
+        "router_path": "vlm",
+        "hypothesis_scope": "full_set_fallback"
+      }
+    ]
+  },
+  {
+    "filename": "336261280-Indigo-Ticket.pdf",
+    "v2_elapsed": 60.066,
+    "v1_elapsed": 0.0,
+    "v2_error": null,
+    "v1_error": "HTTPConnectionPool(host='localhost', port=8000): Read timed out. (read timeout=120)",
+    "v2_docs_detected": 2,
+    "v2_predicted_class": "verification_report",
+    "v2_confidence": 0.154,
+    "v2_confidence_band": "LOW",
+    "v2_industry_1": null,
+    "v2_routing_confidence": 0.0,
+    "v2_router_path": "vlm",
+    "v2_hypothesis_scope": "full_set_fallback",
+    "v2_pipeline_timing": {
+      "file_read_ms": 0.1,
+      "page_splitting_ms": 284.6,
+      "metadata_fingerprinting_ms": 0.0,
+      "phash_computation_ms": 0.0,
+      "boundary_detection_ms": 445.6,
+      "heading_confirmation_ms": 0.0,
+      "industry_routing_ms": 378.7,
+      "hypothesis_loading_ms": 5.5,
+      "siglip2_classification_ms": 58024.3,
+      "supabase_logging_ms": 601.2,
+      "total_pipeline_ms": 59778.3
+    },
+    "v1_predicted_label": null,
+    "v1_confidence": null,
+    "v1_confidence_band": null,
+    "v1_status": null,
+    "agree": null,
+    "v2_all_docs": [
+      {
+        "document_index": 1,
+        "page_range": [
+          1,
+          1
+        ],
+        "predicted_class": "verification_report",
+        "confidence": 0.154,
+        "confidence_band": "LOW",
+        "reasoning": "Top hypothesis score 0.15 vs next-best 0.15. Margin 0.009 indicates low-margin m\u2026",
+        "industry_1": null,
+        "routing_confidence": 0.0,
+        "router_path": "vlm",
+        "hypothesis_scope": "full_set_fallback"
+      },
+      {
+        "document_index": 2,
+        "page_range": [
+          2,
+          2
+        ],
+        "predicted_class": "CKYC_or_KYC_form",
+        "confidence": 0.184,
+        "confidence_band": "LOW",
+        "reasoning": "Top hypothesis score 0.18 vs next-best 0.18. Margin 0.005 indicates low-margin m\u2026",
+        "industry_1": null,
+        "routing_confidence": 0.0,
+        "router_path": "vlm",
+        "hypothesis_scope": "full_set_fallback"
+      }
+    ]
+  },
+  {
+    "filename": "382333201-GST-Certificate.pdf",
+    "v2_elapsed": 72.958,
+    "v1_elapsed": 13.198,
+    "v2_error": null,
+    "v1_error": null,
+    "v2_docs_detected": 4,
+    "v2_predicted_class": "professional_license_or_registration_certificate",
+    "v2_confidence": 0.793,
+    "v2_confidence_band": "HIGH",
+    "v2_industry_1": "Medical & Healthcare",
+    "v2_routing_confidence": 0.083,
+    "v2_router_path": "keyword",
+    "v2_hypothesis_scope": "full_set_fallback",
+    "v2_pipeline_timing": {
+      "file_read_ms": 0.5,
+      "page_splitting_ms": 231.4,
+      "metadata_fingerprinting_ms": 0.0,
+      "phash_computation_ms": 0.0,
+      "boundary_detection_ms": 180.5,
+      "heading_confirmation_ms": 0.0,
+      "industry_routing_ms": 146.2,
+      "hypothesis_loading_ms": 2.2,
+      "siglip2_classification_ms": 32442.8,
+      "supabase_logging_ms": 428.6,
+      "total_pipeline_ms": 33474.4
+    },
+    "v1_predicted_label": "legal_document",
+    "v1_confidence": 86.6,
+    "v1_confidence_band": "HIGH",
+    "v1_status": "PASS",
+    "agree": false,
+    "v2_all_docs": [
+      {
+        "document_index": 1,
+        "page_range": [
+          1,
+          1
+        ],
+        "predicted_class": "professional_license_or_registration_certificate",
+        "confidence": 0.793,
+        "confidence_band": "HIGH",
+        "reasoning": "Top hypothesis score 0.79 vs next-best 0.73. Margin 0.065 indicates low-margin m\u2026",
+        "industry_1": "Medical & Healthcare",
+        "routing_confidence": 0.083,
+        "router_path": "keyword",
+        "hypothesis_scope": "full_set_fallback"
+      },
+      {
+        "document_index": 2,
+        "page_range": [
+          2,
+          2
+        ],
+        "predicted_class": "birth_certificate",
+        "confidence": 0.963,
+        "confidence_band": "HIGH",
+        "reasoning": "Top hypothesis score 0.96 vs next-best 0.86. Margin 0.102 indicates moderate con\u2026",
+        "industry_1": "Taxation & Compliance",
+        "routing_confidence": 0.053,
+        "router_path": "keyword",
+        "hypothesis_scope": "full_set_fallback"
+      },
+      {
+        "document_index": 3,
+        "page_range": [
+          3,
+          3
+        ],
+        "predicted_class": "certificate_of_incorporation_or_MOA",
+        "confidence": 0.002,
+        "confidence_band": "LOW",
+        "reasoning": "Top hypothesis score 0.00 vs next-best 0.00. Margin 0.0 indicates low-margin mat\u2026",
+        "industry_1": null,
+        "routing_confidence": 0.0,
+        "router_path": "vlm",
+        "hypothesis_scope": "full_set_fallback"
+      },
+      {
+        "document_index": 4,
+        "page_range": [
+          4,
+          4
+        ],
+        "predicted_class": "trade_license",
+        "confidence": 0.69,
+        "confidence_band": "MEDIUM",
+        "reasoning": "Top hypothesis score 0.69 vs next-best 0.68. Margin 0.006 indicates low-margin m\u2026",
+        "industry_1": "Taxation & Compliance",
+        "routing_confidence": 0.053,
+        "router_path": "keyword",
+        "hypothesis_scope": "full_set_fallback"
+      }
+    ]
+  },
+  {
+    "filename": "414850761-Djtt-Gst-Certificate-1.pdf",
+    "v2_elapsed": 15.464,
+    "v1_elapsed": 23.123,
+    "v2_error": null,
+    "v1_error": null,
+    "v2_docs_detected": 1,
+    "v2_predicted_class": "caste_certificate",
+    "v2_confidence": 0.721,
+    "v2_confidence_band": "MEDIUM",
+    "v2_industry_1": "Medical & Healthcare",
+    "v2_routing_confidence": 0.083,
+    "v2_router_path": "keyword",
+    "v2_hypothesis_scope": "full_set_fallback",
+    "v2_pipeline_timing": {
+      "file_read_ms": 0.0,
+      "page_splitting_ms": 174.6,
+      "metadata_fingerprinting_ms": 0.0,
+      "phash_computation_ms": 0.0,
+      "boundary_detection_ms": 95.3,
+      "heading_confirmation_ms": 0.0,
+      "industry_routing_ms": 36.4,
+      "hypothesis_loading_ms": 1.5,
+      "siglip2_classification_ms": 14094.9,
+      "supabase_logging_ms": 855.9,
+      "total_pipeline_ms": 15260.4
+    },
+    "v1_predicted_label": "marksheet_degree",
+    "v1_confidence": 63.7,
+    "v1_confidence_band": "MEDIUM",
+    "v1_status": "PASS",
+    "agree": false,
+    "v2_all_docs": [
+      {
+        "document_index": 1,
+        "page_range": [
+          1,
+          3
+        ],
+        "predicted_class": "caste_certificate",
+        "confidence": 0.721,
+        "confidence_band": "MEDIUM",
+        "reasoning": "Top hypothesis score 0.72 vs next-best 0.66. Margin 0.057 indicates low-margin m\u2026",
+        "industry_1": "Medical & Healthcare",
+        "routing_confidence": 0.083,
+        "router_path": "keyword",
+        "hypothesis_scope": "full_set_fallback"
+      }
+    ]
+  },
+  {
+    "filename": "417748875-179147-5PMF2604195PMF1274BD72E7059F44C3-SIGNED-pdf.pdf",
+    "v2_elapsed": 71.492,
+    "v1_elapsed": 64.945,
+    "v2_error": null,
+    "v1_error": null,
+    "v2_docs_detected": 6,
+    "v2_predicted_class": "CKYC_or_KYC_form",
+    "v2_confidence": 0.681,
+    "v2_confidence_band": "MEDIUM",
+    "v2_industry_1": "Investments & Wealth",
+    "v2_routing_confidence": 0.071,
+    "v2_router_path": "keyword",
+    "v2_hypothesis_scope": "full_set_fallback",
+    "v2_pipeline_timing": {
+      "file_read_ms": 0.4,
+      "page_splitting_ms": 274.5,
+      "metadata_fingerprinting_ms": 0.0,
+      "phash_computation_ms": 0.0,
+      "boundary_detection_ms": 232.8,
+      "heading_confirmation_ms": 0.0,
+      "industry_routing_ms": 422.8,
+      "hypothesis_loading_ms": 0.9,
+      "siglip2_classification_ms": 69370.5,
+      "supabase_logging_ms": 1000.5,
+      "total_pipeline_ms": 71374.9
+    },
+    "v1_predicted_label": "noc",
+    "v1_confidence": 79.9,
+    "v1_confidence_band": "HIGH",
+    "v1_status": "PASS",
+    "agree": false,
+    "v2_all_docs": [
+      {
+        "document_index": 1,
+        "page_range": [
+          1,
+          1
+        ],
+        "predicted_class": "CKYC_or_KYC_form",
+        "confidence": 0.681,
+        "confidence_band": "MEDIUM",
+        "reasoning": "Top hypothesis score 0.68 vs next-best 0.33. Margin 0.352 indicates clear match.",
+        "industry_1": "Investments & Wealth",
+        "routing_confidence": 0.071,
+        "router_path": "keyword",
+        "hypothesis_scope": "full_set_fallback"
+      },
+      {
+        "document_index": 2,
+        "page_range": [
+          2,
+          2
+        ],
+        "predicted_class": "birth_certificate",
+        "confidence": 0.509,
+        "confidence_band": "MEDIUM",
+        "reasoning": "Top hypothesis score 0.51 vs next-best 0.46. Margin 0.045 indicates low-margin m\u2026",
+        "industry_1": "Identity & KYC",
+        "routing_confidence": 0.048,
+        "router_path": "keyword",
+        "hypothesis_scope": "full_set_fallback"
+      },
+      {
+        "document_index": 3,
+        "page_range": [
+          3,
+          3
+        ],
+        "predicted_class": "CKYC_or_KYC_form",
+        "confidence": 0.743,
+        "confidence_band": "MEDIUM",
+        "reasoning": "Top hypothesis score 0.74 vs next-best 0.48. Margin 0.264 indicates clear match.",
+        "industry_1": "Banking & Lending",
+        "routing_confidence": 0.091,
+        "router_path": "keyword",
+        "hypothesis_scope": "full_set_fallback"
+      },
+      {
+        "document_index": 4,
+        "page_range": [
+          4,
+          8
+        ],
+        "predicted_class": "rental_or_leave_license_agreement",
+        "confidence": 0.532,
+        "confidence_band": "MEDIUM",
+        "reasoning": "Top hypothesis score 0.53 vs next-best 0.52. Margin 0.009 indicates low-margin m\u2026",
+        "industry_1": "Investments & Wealth",
+        "routing_confidence": 0.071,
+        "router_path": "keyword",
+        "hypothesis_scope": "full_set_fallback"
+      },
+      {
+        "document_index": 5,
+        "page_range": [
+          9,
+          12
+        ],
+        "predicted_class": "ration_card",
+        "confidence": 0.841,
+        "confidence_band": "HIGH",
+        "reasoning": "Top hypothesis score 0.84 vs next-best 0.82. Margin 0.019 indicates low-margin m\u2026",
+        "industry_1": null,
+        "routing_confidence": 0.0,
+        "router_path": "vlm",
+        "hypothesis_scope": "full_set_fallback"
+      },
+      {
+        "document_index": 6,
+        "page_range": [
+          13,
+          13
+        ],
+        "predicted_class": "non_creamy_layer_certificate",
+        "confidence": 0.895,
+        "confidence_band": "HIGH",
+        "reasoning": "Top hypothesis score 0.90 vs next-best 0.78. Margin 0.119 indicates moderate con\u2026",
+        "industry_1": "Investments & Wealth",
+        "routing_confidence": 0.143,
+        "router_path": "keyword",
+        "hypothesis_scope": "full_set_fallback"
+      }
+    ]
+  },
+  {
+    "filename": "724889540-DOLS-Amit-Kumar-BAMS-Srivastava.pdf",
+    "v2_elapsed": 100.991,
+    "v1_elapsed": 30.023,
+    "v2_error": null,
+    "v1_error": null,
+    "v2_docs_detected": 8,
+    "v2_predicted_class": "marksheet_degree",
+    "v2_confidence": 0.312,
+    "v2_confidence_band": "LOW",
+    "v2_industry_1": null,
+    "v2_routing_confidence": 0.0,
+    "v2_router_path": "vlm",
+    "v2_hypothesis_scope": "full_set_fallback",
+    "v2_pipeline_timing": {
+      "file_read_ms": 0.0,
+      "page_splitting_ms": 311.0,
+      "metadata_fingerprinting_ms": 0.0,
+      "phash_computation_ms": 0.0,
+      "boundary_detection_ms": 184.4,
+      "heading_confirmation_ms": 0.0,
+      "industry_routing_ms": 729.4,
+      "hypothesis_loading_ms": 8.2,
+      "siglip2_classification_ms": 99061.8,
+      "supabase_logging_ms": 547.2,
+      "total_pipeline_ms": 100882.9
+    },
+    "v1_predicted_label": "kyc_document",
+    "v1_confidence": 95.6,
+    "v1_confidence_band": "HIGH",
+    "v1_status": "PASS",
+    "agree": false,
+    "v2_all_docs": [
+      {
+        "document_index": 1,
+        "page_range": [
+          1,
+          1
+        ],
+        "predicted_class": "marksheet_degree",
+        "confidence": 0.312,
+        "confidence_band": "LOW",
+        "reasoning": "Top hypothesis score 0.31 vs next-best 0.30. Margin 0.009 indicates low-margin m\u2026",
+        "industry_1": null,
+        "routing_confidence": 0.0,
+        "router_path": "vlm",
+        "hypothesis_scope": "full_set_fallback"
+      },
+      {
+        "document_index": 2,
+        "page_range": [
+          2,
+          2
+        ],
+        "predicted_class": "migration_or_transfer_certificate",
+        "confidence": 0.824,
+        "confidence_band": "HIGH",
+        "reasoning": "Top hypothesis score 0.82 vs next-best 0.70. Margin 0.121 indicates moderate con\u2026",
+        "industry_1": "Education",
+        "routing_confidence": 0.059,
+        "router_path": "keyword",
+        "hypothesis_scope": "full_set_fallback"
+      },
+      {
+        "document_index": 3,
+        "page_range": [
+          3,
+          4
+        ],
+        "predicted_class": "marksheet_degree",
+        "confidence": 0.927,
+        "confidence_band": "HIGH",
+        "reasoning": "Top hypothesis score 0.93 vs next-best 0.69. Margin 0.235 indicates clear match.",
+        "industry_1": null,
+        "routing_confidence": 0.0,
+        "router_path": "vlm",
+        "hypothesis_scope": "full_set_fallback"
+      },
+      {
+        "document_index": 4,
+        "page_range": [
+          5,
+          5
+        ],
+        "predicted_class": "marksheet_degree",
+        "confidence": 0.932,
+        "confidence_band": "HIGH",
+        "reasoning": "Top hypothesis score 0.93 vs next-best 0.27. Margin 0.665 indicates unambiguous \u2026",
+        "industry_1": null,
+        "routing_confidence": 0.0,
+        "router_path": "vlm",
+        "hypothesis_scope": "full_set_fallback"
+      },
+      {
+        "document_index": 5,
+        "page_range": [
+          6,
+          6
+        ],
+        "predicted_class": "kyc_document",
+        "confidence": 0.96,
+        "confidence_band": "HIGH",
+        "reasoning": "Top hypothesis score 0.96 vs next-best 0.88. Margin 0.083 indicates low-margin m\u2026",
+        "industry_1": null,
+        "routing_confidence": 0.0,
+        "router_path": "vlm",
+        "hypothesis_scope": "full_set_fallback"
+      },
+      {
+        "document_index": 6,
+        "page_range": [
+          7,
+          7
+        ],
+        "predicted_class": "ration_card",
+        "confidence": 0.843,
+        "confidence_band": "HIGH",
+        "reasoning": "Top hypothesis score 0.84 vs next-best 0.76. Margin 0.08 indicates low-margin ma\u2026",
+        "industry_1": null,
+        "routing_confidence": 0.0,
+        "router_path": "vlm",
+        "hypothesis_scope": "full_set_fallback"
+      },
+      {
+        "document_index": 7,
+        "page_range": [
+          8,
+          10
+        ],
+        "predicted_class": "marksheet_degree",
+        "confidence": 0.859,
+        "confidence_band": "HIGH",
+        "reasoning": "Top hypothesis score 0.86 vs next-best 0.43. Margin 0.424 indicates unambiguous \u2026",
+        "industry_1": null,
+        "routing_confidence": 0.0,
+        "router_path": "vlm",
+        "hypothesis_scope": "full_set_fallback"
+      },
+      {
+        "document_index": 8,
+        "page_range": [
+          11,
+          11
+        ],
+        "predicted_class": "photograph",
+        "confidence": 0.013,
+        "confidence_band": "LOW",
+        "reasoning": "Top hypothesis score 0.01 vs next-best 0.00. Margin 0.011 indicates low-margin m\u2026",
+        "industry_1": null,
+        "routing_confidence": 0.0,
+        "router_path": "vlm",
+        "hypothesis_scope": "full_set_fallback"
+      }
+    ]
+  },
+  {
+    "filename": "800097065-85f4ebaa-efb7-4917-a29f-f7e5f1f3fb61 (1).pdf",
+    "v2_elapsed": 0.0,
+    "v1_elapsed": 0.0,
+    "v2_error": "HTTPConnectionPool(host='localhost', port=8000): Read timed out. (read timeout=120)",
+    "v1_error": "('Connection aborted.', TimeoutError('timed out'))",
+    "v2_docs_detected": null,
+    "v2_predicted_class": null,
+    "v2_confidence": null,
+    "v2_confidence_band": null,
+    "v2_industry_1": null,
+    "v2_routing_confidence": null,
+    "v2_router_path": null,
+    "v2_hypothesis_scope": null,
+    "v2_pipeline_timing": null,
+    "v1_predicted_label": null,
+    "v1_confidence": null,
+    "v1_confidence_band": null,
+    "v1_status": null,
+    "agree": null,
+    "v2_all_docs": []
+  },
+  {
+    "filename": "Justdial-OnGrid_Agreement.pdf",
+    "v2_elapsed": 0.0,
+    "v1_elapsed": 0.0,
+    "v2_error": "('Connection aborted.', TimeoutError('timed out'))",
+    "v1_error": "HTTPConnectionPool(host='localhost', port=8000): Read timed out. (read timeout=120)",
+    "v2_docs_detected": null,
+    "v2_predicted_class": null,
+    "v2_confidence": null,
+    "v2_confidence_band": null,
+    "v2_industry_1": null,
+    "v2_routing_confidence": null,
+    "v2_router_path": null,
+    "v2_hypothesis_scope": null,
+    "v2_pipeline_timing": null,
+    "v1_predicted_label": null,
+    "v1_confidence": null,
+    "v1_confidence_band": null,
+    "v1_status": null,
+    "agree": null,
+    "v2_all_docs": []
+  },
+  {
+    "filename": "Payslip DFDL.pdf",
+    "v2_elapsed": 47.734,
+    "v1_elapsed": 94.14,
+    "v2_error": null,
+    "v1_error": null,
+    "v2_docs_detected": 1,
+    "v2_predicted_class": "salary_slip",
+    "v2_confidence": 0.983,
+    "v2_confidence_band": "HIGH",
+    "v2_industry_1": "Employment & HR",
+    "v2_routing_confidence": 0.111,
+    "v2_router_path": "keyword",
+    "v2_hypothesis_scope": "full_set_fallback",
+    "v2_pipeline_timing": {
+      "file_read_ms": 0.0,
+      "page_splitting_ms": 419.6,
+      "metadata_fingerprinting_ms": 0.0,
+      "phash_computation_ms": 0.0,
+      "boundary_detection_ms": 0.0,
+      "heading_confirmation_ms": 0.0,
+      "industry_routing_ms": 55.8,
+      "hypothesis_loading_ms": 1.6,
+      "siglip2_classification_ms": 41252.1,
+      "supabase_logging_ms": 858.0,
+      "total_pipeline_ms": 42619.1
+    },
+    "v1_predicted_label": "salary_slip",
+    "v1_confidence": 95.3,
+    "v1_confidence_band": "HIGH",
+    "v1_status": "PASS",
+    "agree": true,
+    "v2_all_docs": [
+      {
+        "document_index": 1,
+        "page_range": [
+          1,
+          1
+        ],
+        "predicted_class": "salary_slip",
+        "confidence": 0.983,
+        "confidence_band": "HIGH",
+        "reasoning": "Top hypothesis score 0.98 vs next-best 0.76. Margin 0.221 indicates clear match.",
+        "industry_1": "Employment & HR",
+        "routing_confidence": 0.111,
+        "router_path": "keyword",
+        "hypothesis_scope": "full_set_fallback"
+      }
+    ]
+  },
+  {
+    "filename": "Payslip_1212_May_2026_8390342009566494850_1779879155823.pdf",
+    "v2_elapsed": 27.102,
+    "v1_elapsed": 0.0,
+    "v2_error": null,
+    "v1_error": "HTTPConnectionPool(host='localhost', port=8000): Read timed out. (read timeout=120)",
+    "v2_docs_detected": 1,
+    "v2_predicted_class": "subscription_invoice",
+    "v2_confidence": 0.876,
+    "v2_confidence_band": "HIGH",
+    "v2_industry_1": "Banking & Lending",
+    "v2_routing_confidence": 0.045,
+    "v2_router_path": "keyword",
+    "v2_hypothesis_scope": "full_set_fallback",
+    "v2_pipeline_timing": {
+      "file_read_ms": 0.1,
+      "page_splitting_ms": 306.5,
+      "metadata_fingerprinting_ms": 0.0,
+      "phash_computation_ms": 0.0,
+      "boundary_detection_ms": 0.1,
+      "heading_confirmation_ms": 0.0,
+      "industry_routing_ms": 89.0,
+      "hypothesis_loading_ms": 1.6,
+      "siglip2_classification_ms": 25845.8,
+      "supabase_logging_ms": 637.1,
+      "total_pipeline_ms": 26888.6
+    },
+    "v1_predicted_label": null,
+    "v1_confidence": null,
+    "v1_confidence_band": null,
+    "v1_status": null,
+    "agree": null,
+    "v2_all_docs": [
+      {
+        "document_index": 1,
+        "page_range": [
+          1,
+          1
+        ],
+        "predicted_class": "subscription_invoice",
+        "confidence": 0.876,
+        "confidence_band": "HIGH",
+        "reasoning": "Top hypothesis score 0.88 vs next-best 0.78. Margin 0.1 indicates moderate confi\u2026",
+        "industry_1": "Banking & Lending",
+        "routing_confidence": 0.045,
+        "router_path": "keyword",
+        "hypothesis_scope": "full_set_fallback"
+      }
+    ]
+  },
+  {
+    "filename": "Resume- Mohit Singhal  (1).pdf",
+    "v2_elapsed": 82.49,
+    "v1_elapsed": 114.323,
+    "v2_error": null,
+    "v1_error": null,
+    "v2_docs_detected": 1,
+    "v2_predicted_class": "resume",
+    "v2_confidence": 0.563,
+    "v2_confidence_band": "MEDIUM",
+    "v2_industry_1": "Identity & KYC",
+    "v2_routing_confidence": 0.095,
+    "v2_router_path": "keyword",
+    "v2_hypothesis_scope": "full_set_fallback",
+    "v2_pipeline_timing": {
+      "file_read_ms": 0.0,
+      "page_splitting_ms": 228.2,
+      "metadata_fingerprinting_ms": 0.0,
+      "phash_computation_ms": 0.0,
+      "boundary_detection_ms": 0.0,
+      "heading_confirmation_ms": 0.0,
+      "industry_routing_ms": 108.2,
+      "hypothesis_loading_ms": 2.7,
+      "siglip2_classification_ms": 22565.8,
+      "supabase_logging_ms": 774.4,
+      "total_pipeline_ms": 23745.2
+    },
+    "v1_predicted_label": "resume",
+    "v1_confidence": 67.3,
+    "v1_confidence_band": "MEDIUM",
+    "v1_status": "PASS",
+    "agree": true,
+    "v2_all_docs": [
+      {
+        "document_index": 1,
+        "page_range": [
+          1,
+          1
+        ],
+        "predicted_class": "resume",
+        "confidence": 0.563,
+        "confidence_band": "MEDIUM",
+        "reasoning": "Top hypothesis score 0.56 vs next-best 0.14. Margin 0.426 indicates unambiguous \u2026",
+        "industry_1": "Identity & KYC",
+        "routing_confidence": 0.095,
+        "router_path": "keyword",
+        "hypothesis_scope": "full_set_fallback"
+      }
+    ]
+  },
+  {
+    "filename": "Sanjay_Hegde_Product_Manager_IDfy.pdf",
+    "v2_elapsed": 40.802,
+    "v1_elapsed": 51.426,
+    "v2_error": null,
+    "v1_error": null,
+    "v2_docs_detected": 1,
+    "v2_predicted_class": "resume",
+    "v2_confidence": 0.856,
+    "v2_confidence_band": "HIGH",
+    "v2_industry_1": "Procurement & Finance Operations",
+    "v2_routing_confidence": 0.077,
+    "v2_router_path": "keyword",
+    "v2_hypothesis_scope": "full_set_fallback",
+    "v2_pipeline_timing": {
+      "file_read_ms": 0.0,
+      "page_splitting_ms": 300.9,
+      "metadata_fingerprinting_ms": 0.0,
+      "phash_computation_ms": 0.0,
+      "boundary_detection_ms": 0.0,
+      "heading_confirmation_ms": 0.0,
+      "industry_routing_ms": 38.9,
+      "hypothesis_loading_ms": 2.2,
+      "siglip2_classification_ms": 38568.3,
+      "supabase_logging_ms": 1631.4,
+      "total_pipeline_ms": 40551.4
+    },
+    "v1_predicted_label": "resume",
+    "v1_confidence": 84.4,
+    "v1_confidence_band": "HIGH",
+    "v1_status": "PASS",
+    "agree": true,
+    "v2_all_docs": [
+      {
+        "document_index": 1,
+        "page_range": [
+          1,
+          1
+        ],
+        "predicted_class": "resume",
+        "confidence": 0.856,
+        "confidence_band": "HIGH",
+        "reasoning": "Top hypothesis score 0.86 vs next-best 0.26. Margin 0.6 indicates unambiguous ma\u2026",
+        "industry_1": "Procurement & Finance Operations",
+        "routing_confidence": 0.077,
+        "router_path": "keyword",
+        "hypothesis_scope": "full_set_fallback"
+      }
+    ]
+  },
+  {
+    "filename": "adhar1.1.jpeg",
+    "v2_elapsed": 12.324,
+    "v1_elapsed": 54.445,
+    "v2_error": null,
+    "v1_error": null,
+    "v2_docs_detected": 1,
+    "v2_predicted_class": "caste_certificate",
+    "v2_confidence": 0.758,
+    "v2_confidence_band": "HIGH",
+    "v2_industry_1": null,
+    "v2_routing_confidence": 0.0,
+    "v2_router_path": "vlm",
+    "v2_hypothesis_scope": "full_set_fallback",
+    "v2_pipeline_timing": {
+      "file_read_ms": 0.0,
+      "page_splitting_ms": 9.1,
+      "metadata_fingerprinting_ms": 0.0,
+      "phash_computation_ms": 0.0,
+      "boundary_detection_ms": 0.0,
+      "heading_confirmation_ms": 0.0,
+      "industry_routing_ms": 0.5,
+      "hypothesis_loading_ms": 0.2,
+      "siglip2_classification_ms": 11871.2,
+      "supabase_logging_ms": 349.1,
+      "total_pipeline_ms": 12244.8
+    },
+    "v1_predicted_label": "kyc_document",
+    "v1_confidence": 49.1,
+    "v1_confidence_band": "MEDIUM",
+    "v1_status": "PASS",
+    "agree": false,
+    "v2_all_docs": [
+      {
+        "document_index": 1,
+        "page_range": [
+          1,
+          1
+        ],
+        "predicted_class": "caste_certificate",
+        "confidence": 0.758,
+        "confidence_band": "HIGH",
+        "reasoning": "Top hypothesis score 0.76 vs next-best 0.74. Margin 0.018 indicates low-margin m\u2026",
+        "industry_1": null,
+        "routing_confidence": 0.0,
+        "router_path": "vlm",
+        "hypothesis_scope": "full_set_fallback"
+      }
+    ]
+  },
+  {
+    "filename": "bank card - 5.jpeg",
+    "v2_elapsed": 17.825,
+    "v1_elapsed": 5.966,
+    "v2_error": null,
+    "v1_error": null,
+    "v2_docs_detected": 1,
+    "v2_predicted_class": "kyc_document",
+    "v2_confidence": 0.059,
+    "v2_confidence_band": "LOW",
+    "v2_industry_1": null,
+    "v2_routing_confidence": 0.0,
+    "v2_router_path": "vlm",
+    "v2_hypothesis_scope": "full_set_fallback",
+    "v2_pipeline_timing": {
+      "file_read_ms": 0.0,
+      "page_splitting_ms": 26.1,
+      "metadata_fingerprinting_ms": 0.0,
+      "phash_computation_ms": 0.0,
+      "boundary_detection_ms": 0.0,
+      "heading_confirmation_ms": 0.0,
+      "industry_routing_ms": 1.2,
+      "hypothesis_loading_ms": 0.5,
+      "siglip2_classification_ms": 17401.1,
+      "supabase_logging_ms": 310.7,
+      "total_pipeline_ms": 17744.7
+    },
+    "v1_predicted_label": "out_of_category",
+    "v1_confidence": 0.0,
+    "v1_confidence_band": "LOW",
+    "v1_status": "REJECT",
+    "agree": false,
+    "v2_all_docs": [
+      {
+        "document_index": 1,
+        "page_range": [
+          1,
+          1
+        ],
+        "predicted_class": "kyc_document",
+        "confidence": 0.059,
+        "confidence_band": "LOW",
+        "reasoning": "Top hypothesis score 0.06 vs next-best 0.02. Margin 0.043 indicates low-margin m\u2026",
+        "industry_1": null,
+        "routing_confidence": 0.0,
+        "router_path": "vlm",
+        "hypothesis_scope": "full_set_fallback"
+      }
+    ]
+  },
+  {
+    "filename": "blessyresume.pdf",
+    "v2_elapsed": 7.957,
+    "v1_elapsed": 12.301,
+    "v2_error": null,
+    "v1_error": null,
+    "v2_docs_detected": 1,
+    "v2_predicted_class": "resume",
+    "v2_confidence": 0.58,
+    "v2_confidence_band": "MEDIUM",
+    "v2_industry_1": null,
+    "v2_routing_confidence": 0.0,
+    "v2_router_path": "vlm",
+    "v2_hypothesis_scope": "full_set_fallback",
+    "v2_pipeline_timing": {
+      "file_read_ms": 0.0,
+      "page_splitting_ms": 229.4,
+      "metadata_fingerprinting_ms": 0.0,
+      "phash_computation_ms": 0.0,
+      "boundary_detection_ms": 123.7,
+      "heading_confirmation_ms": 0.0,
+      "industry_routing_ms": 10.2,
+      "hypothesis_loading_ms": 0.0,
+      "siglip2_classification_ms": 6998.3,
+      "supabase_logging_ms": 496.3,
+      "total_pipeline_ms": 7865.0
+    },
+    "v1_predicted_label": "resume",
+    "v1_confidence": 60.6,
+    "v1_confidence_band": "MEDIUM",
+    "v1_status": "PASS",
+    "agree": true,
+    "v2_all_docs": [
+      {
+        "document_index": 1,
+        "page_range": [
+          1,
+          2
+        ],
+        "predicted_class": "resume",
+        "confidence": 0.58,
+        "confidence_band": "MEDIUM",
+        "reasoning": "Top hypothesis score 0.58 vs next-best 0.10. Margin 0.484 indicates unambiguous \u2026",
+        "industry_1": null,
+        "routing_confidence": 0.0,
+        "router_path": "vlm",
+        "hypothesis_scope": "full_set_fallback"
+      }
+    ]
+  },
+  {
+    "filename": "cheque-8.jpg.jpeg",
+    "v2_elapsed": 94.341,
+    "v1_elapsed": 9.475,
+    "v2_error": null,
+    "v1_error": null,
+    "v2_docs_detected": 1,
+    "v2_predicted_class": "cheque_or_bank_instrument",
+    "v2_confidence": 0.495,
+    "v2_confidence_band": "LOW",
+    "v2_industry_1": null,
+    "v2_routing_confidence": 0.0,
+    "v2_router_path": "vlm",
+    "v2_hypothesis_scope": "full_set_fallback",
+    "v2_pipeline_timing": {
+      "file_read_ms": 0.7,
+      "page_splitting_ms": 68.7,
+      "metadata_fingerprinting_ms": 0.0,
+      "phash_computation_ms": 0.0,
+      "boundary_detection_ms": 0.0,
+      "heading_confirmation_ms": 0.0,
+      "industry_routing_ms": 0.5,
+      "hypothesis_loading_ms": 0.1,
+      "siglip2_classification_ms": 92805.9,
+      "supabase_logging_ms": 1360.4,
+      "total_pipeline_ms": 94246.9
+    },
+    "v1_predicted_label": "bank_account_statement",
+    "v1_confidence": 44.7,
+    "v1_confidence_band": "MEDIUM",
+    "v1_status": "PASS",
+    "agree": false,
+    "v2_all_docs": [
+      {
+        "document_index": 1,
+        "page_range": [
+          1,
+          1
+        ],
+        "predicted_class": "cheque_or_bank_instrument",
+        "confidence": 0.495,
+        "confidence_band": "LOW",
+        "reasoning": "Top hypothesis score 0.49 vs next-best 0.45. Margin 0.048 indicates low-margin m\u2026",
+        "industry_1": null,
+        "routing_confidence": 0.0,
+        "router_path": "vlm",
+        "hypothesis_scope": "full_set_fallback"
+      }
+    ]
+  },
+  {
+    "filename": "medical doc - 2.jpeg",
+    "v2_elapsed": 5.193,
+    "v1_elapsed": 18.88,
+    "v2_error": null,
+    "v1_error": null,
+    "v2_docs_detected": 1,
+    "v2_predicted_class": "marksheet_degree",
+    "v2_confidence": 0.081,
+    "v2_confidence_band": "LOW",
+    "v2_industry_1": null,
+    "v2_routing_confidence": 0.0,
+    "v2_router_path": "vlm",
+    "v2_hypothesis_scope": "full_set_fallback",
+    "v2_pipeline_timing": {
+      "file_read_ms": 0.0,
+      "page_splitting_ms": 11.7,
+      "metadata_fingerprinting_ms": 0.0,
+      "phash_computation_ms": 0.0,
+      "boundary_detection_ms": 0.0,
+      "heading_confirmation_ms": 0.0,
+      "industry_routing_ms": 0.5,
+      "hypothesis_loading_ms": 0.0,
+      "siglip2_classification_ms": 4343.9,
+      "supabase_logging_ms": 787.2,
+      "total_pipeline_ms": 5147.6
+    },
+    "v1_predicted_label": "marksheet_degree",
+    "v1_confidence": 8.1,
+    "v1_confidence_band": "LOW",
+    "v1_status": "PASS",
+    "agree": true,
+    "v2_all_docs": [
+      {
+        "document_index": 1,
+        "page_range": [
+          1,
+          1
+        ],
+        "predicted_class": "marksheet_degree",
+        "confidence": 0.081,
+        "confidence_band": "LOW",
+        "reasoning": "Top hypothesis score 0.08 vs next-best 0.04. Margin 0.036 indicates low-margin m\u2026",
+        "industry_1": null,
+        "routing_confidence": 0.0,
+        "router_path": "vlm",
+        "hypothesis_scope": "full_set_fallback"
+      }
+    ]
+  },
+  {
+    "filename": "passbook-1.jpg.jpeg",
+    "v2_elapsed": 71.325,
+    "v1_elapsed": 114.162,
+    "v2_error": null,
+    "v1_error": null,
+    "v2_docs_detected": 1,
+    "v2_predicted_class": "kyc_document",
+    "v2_confidence": 0.512,
+    "v2_confidence_band": "MEDIUM",
+    "v2_industry_1": null,
+    "v2_routing_confidence": 0.0,
+    "v2_router_path": "vlm",
+    "v2_hypothesis_scope": "full_set_fallback",
+    "v2_pipeline_timing": {
+      "file_read_ms": 0.5,
+      "page_splitting_ms": 66.1,
+      "metadata_fingerprinting_ms": 0.0,
+      "phash_computation_ms": 0.0,
+      "boundary_detection_ms": 0.0,
+      "heading_confirmation_ms": 0.0,
+      "industry_routing_ms": 0.0,
+      "hypothesis_loading_ms": 0.3,
+      "siglip2_classification_ms": 70604.3,
+      "supabase_logging_ms": 525.7,
+      "total_pipeline_ms": 71244.6
+    },
+    "v1_predicted_label": "kyc_document",
+    "v1_confidence": 51.2,
+    "v1_confidence_band": "MEDIUM",
+    "v1_status": "PASS",
+    "agree": true,
+    "v2_all_docs": [
+      {
+        "document_index": 1,
+        "page_range": [
+          1,
+          1
+        ],
+        "predicted_class": "kyc_document",
+        "confidence": 0.512,
+        "confidence_band": "MEDIUM",
+        "reasoning": "Top hypothesis score 0.51 vs next-best 0.44. Margin 0.073 indicates low-margin m\u2026",
+        "industry_1": null,
+        "routing_confidence": 0.0,
+        "router_path": "vlm",
+        "hypothesis_scope": "full_set_fallback"
+      }
+    ]
+  }
+]
